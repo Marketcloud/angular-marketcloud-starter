@@ -1,0 +1,149 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title"><span class="glyphicon glyphicon-map-marker"></span> Shipping address</h5>
+  </div>
+  <div class="panel-body">
+    <div class="form">
+    	<div class="form-group">
+    		<label>Email address</label>
+    		<input type="email" class="form-control" ng-model="shipping_address.email" />
+    	</div>
+    	<div class="form-group">
+    		<label>First Name</label>
+    		<input type="text" class="form-control" ng-model="shipping_address.first_name" />
+    	</div>
+    	<div class="form-group">
+    		<label>Last Name</label>
+    		<input type="text" class="form-control" ng-model="shipping_address.last_name" />
+    	</div>
+    	<div class="form-group">
+    		<label>Country</label>
+    		<select class="form-control" ng-model="shipping_address.country">
+    			<option value="IT">Italy</option>
+    			<option value="DE">Germany</option>
+    			<option value="UK">United Kingdom</option>
+    		</select>
+    	</div>
+    	<div class="form-group">
+    		<label>City</label>
+    		<input type="text" class="form-control" ng-model="shipping_address.city" />
+    	</div>
+    	<div class="form-group">
+    		<label>Street Address</label>
+    		<input type="text" class="form-control" ng-model="shipping_address.address1" />
+    	</div>
+    	<div class="form-group">
+    		<label>Postal code</label>
+    		<input type="text" class="form-control" ng-model="shipping_address.postal_code" />
+    	</div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title"><span class="glyphicon glyphicon-plane"></span> Shipping method</h5>
+  </div>
+  <div class="panel-body">
+  	<div class="radio">
+  <label>
+    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+    Standard delivery (7-10 work days)
+  </label>
+</div>
+<div class="radio">
+  <label>
+    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+    Express delivery (1-3 work days)
+  </label>
+</div>
+  </div>
+  </div>
+
+
+  <div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title"><span class="glyphicon glyphicon-credit-card"></span> Payment informations</h5>
+  </div>
+  <div class="panel-body">
+  <div class="form">
+
+    <div class="form-group">
+
+        <label>Card Number</label>
+        <input type="text" class="form-control" payments-validate="card" ng-model="shipping_address.address1" />
+      </div>
+    <div class="form-group">
+        <label>Name on card</label>
+        <input type="text" class="form-control" ng-model="shipping_address.card_owner" placeholder="XXX"/>
+    </div>
+
+    <div class="form-group">
+        <div><label>Expiry</label></div>
+        <div class="col-xs-6" style="margin-left:-15px;"><input type="text" class="form-control" payments-validate="expiry" ng-model="shipping_address.expiry_month" placeholder="mm"/></div>
+        <div class="col-xs-6"><input type="text" class="form-control col-xs-6" payments-validate="expiry" ng-model="shipping_address.expiry_year" placeholder="yyyy"/></div>
+        
+        
+      </div>
+    <div class="form-group">
+        <label>CVC</label>
+        <input type="text" class="form-control" payments-validate="cvc" ng-model="shipping_address.cvc" placeholder="XXX"/>
+    </div>
+    
+
+  </div>
+
+  </div>
+  </div>
+
+
+  <div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title"><span class="glyphicon glyphicon-map-marker"></span> Billing address</h5>
+  </div>
+  <div class="panel-body">
+  <div class="checkbox">
+      <label><input type="checkbox" ng-model="billingAddressIsSameAsShipping"> Same as shipping address</label>
+
+    </div>
+    <div class="form" ng-hide="billingAddressIsSameAsShipping">
+    
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" class="form-control" ng-model="billing_address.email" />
+      </div>
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" class="form-control" ng-model="billing_address.first_name" />
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" class="form-control" ng-model="billing_address.last_name" />
+      </div>
+      <div class="form-group">
+        <label>Country</label>
+        <select class="form-control" ng-model="billing_address.country">
+          <option value="IT">Italy</option>
+          <option value="DE">Germany</option>
+          <option value="UK">United Kingdom</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" class="form-control" ng-model="billing_address.city" />
+      </div>
+      <div class="form-group">
+        <label>Street Address</label>
+        <input type="text" class="form-control" ng-model="billing_address.address1" />
+      </div>
+      <div class="form-group">
+        <label>Postal code</label>
+        <input type="text" class="form-control" ng-model="billing_address.postal_code" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="btn btn-block btn-success"><span class="glyphicon glyphicon-ok"></span> Proceed</button>

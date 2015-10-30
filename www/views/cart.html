@@ -1,0 +1,23 @@
+<div class="container">
+<div class="row">
+	<div class="col-xs-12 ">
+		<h5>Your Cart</h5>
+		<div class="cart-entry row" ng-repeat="product in cart.items">
+			<div class="col-lg-8 col-xs-12"><a class="name" href="#/product/{{product.id}}">{{product.name}}</a></div>
+			<div class="col-lg-2 col-xs-6 price">$ {{product.price}}</div>
+			<div class="col-lg-2 col-xs-6 "><input type="number" class="form-control input-sm" ng-model="product.quantity"></div>
+		</div>
+		<div class="cart-entry row">
+			<div class="col-xs-8"><b>Sub-total</b><br/></div>
+			<div class="col-xs-4">$ {{totalCartValue().toFixed(2)}}</div>
+			<div class="col-xs-8"><b>Estimated shipping</b><br/></div>
+			<div class="col-xs-4">$ 9.99</div>
+			<div class="col-xs-8"><b>Total</b><br/></div>
+			<div class="col-xs-4">$ {{(selectedShipping.price+ totalCartValue()).toFixed(2)}}</div>
+		</div>
+	</div>
+	<a class="btn btn-success pull-right" style="margin-top:10px;margin-left:10px;" href="#/checkout"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Checkout</a>
+	<button class="btn btn-info pull-right" style="margin-top:10px;" ng-click="update()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Update</button>
+	
+</div>
+</div>
