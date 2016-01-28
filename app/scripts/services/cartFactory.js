@@ -160,7 +160,7 @@ angular.module('provaMrkCldApp')
      * Non ho capito a cosa serva quell'1 lì come parametro
      */
     exposeCart.creaCarrelloUtente = function () {
-      marketcloud.carts.getByUser(1, function (err, cart) {
+      marketcloud.carts.getByUser(function (err, cart) {
         if (err) {
           $log.warn("Errore critico in recupero carrello  da user-token\n verrà creato un nuovo carrello ")
         }
