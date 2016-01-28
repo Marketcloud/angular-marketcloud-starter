@@ -1,0 +1,19 @@
+<form name="myform" class="login-form" ng-submit="signup()">
+  <h2>Form Registrazione</h2>
+  <label for="inputEmail" class="sr-only">Email</label>
+  <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="example@mail.com"
+         ng-model="email" autofocus
+         required>
+  <br> <br>
+  <label for="inputPassword" class="sr-only">Password</label>
+  <input type="password" id="inputPassword" class="form-control" placeholder="Password" ng-model="password" required>
+  <br>
+  <label for="inputConfirm_password" class="sr-only">Conferma Password</label>
+  <input type="password" id="inputConfirm_password" class="form-control" placeholder="Conferma Password"
+         ng-model="confirm_password" required>
+  <br>
+
+  <div ng-show="error" class="alert alert-danger" role="alert">{{errorMessage}}</div>
+
+  <input type="submit" value="Submit" class="btn btn-lg btn-primary btn-block" type="submit"> </input>
+</form>

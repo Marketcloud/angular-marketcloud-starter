@@ -1,0 +1,65 @@
+<div class="container">
+  <div class='row'>
+    <div class='col-md-12'>
+      <script src='https://js.stripe.com/v2/' type='text/javascript'></script>
+   <!--   <div class='form-row'>
+        <div class='col-xs-12 form-group required'>
+          <label class='control-label'>Name on Card</label>
+          <input class='form-control' size='4' type='text' ng-model="cardInfos.mail">
+        </div>
+      </div>-->
+      <div class='form-row'>
+        <div class='col-xs-12 form-group card required'>
+          <label class='control-label'>Card Number</label>
+          <input autocomplete='off' class='form-control card-number' maxlength="16" size='20' type='text' ng-model="cardInfos.card">
+        </div>
+      </div>
+      <div class='form-row'>
+        <div class='col-xs-6 form-group cvc required'>
+          <label class='control-label'>CVC</label>
+          <input autocomplete='off' class='form-control card-cvc' maxlength="3" placeholder='ex. 311' size='4' type='text '
+                 ng-model="cardInfos.CVC">
+        </div>
+        <div class='col-xs-6 form-group expiration required'>
+          <label class='control-label'>Expiration</label>
+          <input class='form-control card-expiry-month' placeholder='MM/YYYY' maxlength="7" size='2' type='text'
+                 ng-model="cardInfos.expiration">
+        </div>
+      </div>
+      <div class='form-row'>
+        <div class='col-md-12'>
+          <div class='form-control total btn btn-info'>
+            Total:
+            <span class='amount'>{{total | currency}}</span>
+          </div>
+        </div>
+      </div>
+      <div class='form-row'>
+        <div class='col-md-12 form-group'>
+          <button class='form-control btn btn-primary submit-button' type='submit' ng-disabled="!validate()"
+                  ng-Click="continue()">Pay »
+          </button>
+        </div>
+        <div class='col-md-12 form-group'>
+          <button class='form-control btn btn-danger submit-button' type='submit' ng-Click="back()">Back »</button>
+        </div>
+
+      </div>
+      <div class='form-row'>
+        <div class='col-md-12 error form-group hide'>
+          <div class='alert-danger alert'>
+            Please correct the errors and try again.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='col-md-4'></div>
+  </div>
+</div>
+
+<p class="text-info">
+  <button
+    class="btn btn-block btn-link">
+    <img src="https://stripe.com/img/about/logos/logos/black.png" alt="checkout Stripe"/>
+  </button>
+</p>

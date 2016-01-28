@@ -1,0 +1,92 @@
+<p class="text-info" ng-click="secretDebug();">
+  This is your shopping cart. Here you can edit the items,
+  go back to the store, clear the cart, or check out.
+</p>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span8">
+
+      <!-- items -->
+      <table class="table table-bordered">
+
+        <!-- header -->
+        <tr class="well">
+          <td><b>Item</b></td>
+          <td class="tdCenter"><b>Quantity</b></td>
+          <td class="tdRight"><b>Price</b></td>
+          <td/>
+        </tr>
+
+        <!-- empty cart message -->
+        <tr ng-hide="totalItems > 0">
+          <td class="tdCenter" colspan="4">
+            Your cart is empty.
+          </td>
+        </tr>
+        <!-- cart items -->
+        <tr ng-repeat="product in carrelloAttuale.items">
+          <td>{{product.name}} </td>
+          <td class="tdCenter">
+            <div class="input-append">
+              <!-- use type=tel instead of  to prevent spinners -->
+              <input
+                class="span3 text-center" type="tel"
+                ng-model="product.quantity"
+                ng-change="" readonly disabled />
+              <button
+                class="btn btn-success" type="button"
+                  ng-disabled="product.quantity >= product.stock_level"
+                ng-model="firstName"
+                ng-click="(product.quantity = product.quantity+1); updater(product.id,product.quantity);">+
+              </button>
+              <button
+                class="btn btn-inverse" type="button"
+                ng-disabled="product.quantity <= 1"
+                ng-click="(product.quantity = product.quantity-1); updater(product.id,product.quantity);">-
+              </button>
+            </div>
+          </td>
+         <td class="tdRight ">{{product.price * product.quantity | currency}}</td>
+          <td class="tdCenter" title="remove from cart">
+            <button type="button" class="btn btn-default" ng-click="removeProduct(product.id);">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>          </td>
+        </tr>
+
+        <!-- footer -->
+        <tr class="well">
+          <td><b>Total</b></td>
+          <td class="tdCenter"><b>{{totalItems}}</b></td>
+          <td class="tdRight"><b>{{totalPrice | currency}}</b></td>
+          <td/>
+        </tr>
+      </table>
+    </div>
+
+    <!-- buttons -->
+    <div class="span4">
+      <p class="text-info">
+        <a href="#/">
+          <button class="btn btn-block"><i class="icon-chevron-left"/> Indietro </button>
+        </a>
+        <button
+          class="btn btn-block btn-danger"
+          ng-click="svuotaCarrello();"
+          ng-disabled="totalItems < 1">
+          <i class="icon-trash icon-white"/> Svuota carrello
+        </button>
+        <button
+          class="btn btn-block btn-info"
+          ng-click="checkOutClick()"
+          ng-disabled="totalItems < 1">
+          <i class="icon-trash icon-white"/> Checkout
+        </button>
+      </p>
+
+      <br/><br/>
+      <br/><br/>
+
+    </div>
+  </div>
+</div>

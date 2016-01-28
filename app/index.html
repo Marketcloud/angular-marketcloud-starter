@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="styles/shop-homepage.css" rel="stylesheet">
+    <link href="bower_components/sweetalert/dist/sweetalert.css" rel="stylesheet">
+    <link href="bower_components/angular-ui-notification/dist/angular-ui-notification.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+
+  </head>
+  <body ng-app = "provaMrkCldApp">
+  <!-- Navigation -->
+  <div ng-controller="navBarCtrl">
+    <nav-bar></nav-bar> <!-- è una directive in navBarCtrl.js -->
+  </div>
+  <!-- Page Content -->
+  <div class="container">
+     <ng-view></ng-view>
+  </div>
+
+  <div class="container-fluid">
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="row">
+        <div class="col-lg-12">
+         <h4 class="footer-title">Marketcloud</h4>
+         <!--<p>This is a foot(er)</p>
+         <img id="foot" ng-src="images/foot.jpeg" alt="a foot." />-->
+        </div>
+      </div>
+    </footer>
+
+  </div>
+  <!-- /.container -->
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
+       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
+       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
+       }(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/marketcloud-js/dist/marketcloud.min.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="bower_components/angular-ui-notification/dist/angular-ui-notification.js"></script>
+    <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:js({.tmp,app}) scripts/scripts.js -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/services/mcFactory.js"></script>
+  <script src="scripts/services/cartFactory.js"></script>
+  <script src="scripts/services/paymentFactory.js"></script>
+  <script src="scripts/controllers/stripePaymentCtrl.js"></script>
+  <script src="scripts/controllers/mainCtrl.js"></script>
+  <script src="scripts/controllers/loginCtrl.js"></script>
+  <script src="scripts/controllers/signupCtrl.js"></script>
+  <script src="scripts/controllers/navBarCtrl.js"></script>
+  <script src="scripts/controllers/cartCtrl.js"></script>
+  <script src="scripts/controllers/recapOrderCtrl.js"></script>
+  <script src="scripts/controllers/checkOutShippingCtrl.js"></script>
+  <script src="scripts/controllers/checkOutBillingCtrl.js"></script>
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+  <!-- endbuild -->
+  </body>
+</html>

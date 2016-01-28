@@ -1,0 +1,97 @@
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="text-center">
+        <i class="fa fa-search-plus pull-left icon"></i>
+        <h2>Order Recap</h2>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-xs-12 col-md-4 col-lg-4">
+          <div class="panel panel-default height">
+            <div class="panel-heading"><strong>Billing Details</strong></div>
+            <div class="panel-body">
+              {{billingInfos.full_name}}<br>
+              {{billingInfos.address1}}<br>
+              {{billingInfos.city}}<br>
+              {{billingInfos.country}}<br>
+              {{billingInfos.postal_code}}<br>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-4 col-lg-4">
+          <div class="panel panel-default height">
+            <div class="panel-heading"><strong>Payment Information</strong></div>
+            <div class="panel-body">
+              <strong>Card Name:</strong> {{cardInfos.brand}}<br>
+              <strong>Card Number:</strong> {{cardInfos.card}}<br>
+              <strong>Exp Date:</strong> {{cardInfos.expiration}}<br>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-4 col-lg-4">
+          <div class="panel panel-default height">
+            <div class="panel-heading"><strong>Shipping Address</strong></div>
+            <div class="panel-body">
+              {{shippingInfos.full_name}}<br>
+              {{shippingInfos.address1}}<br>
+              {{shippingInfos.city}}<br>
+              {{shippingInfos.country}}<br>
+              {{shippingInfos.postal_code}}<br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="text-center"><strong>Order summary</strong></h3>
+        </div>
+        <div class="panel-body">
+          <div class="table-responsive">
+            <table class="table table-condensed">
+              <thead>
+              <tr>
+                <td><strong>Item Name</strong></td>
+                <td class="text-center"><strong>Item Price</strong></td>
+                <td class="text-center"><strong>Item Quantity</strong></td>
+                <td class="text-right"><strong>Total</strong></td>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="item in theCart">
+                <td>{{item.name}}</td>
+                <td class="text-center">{{item.price}}</td>
+                <td class="text-center">{{item.quantity}}</td>
+                <td class="text-right">{{item.price*item.quantity}}</td>
+              </tr>
+              <tr>
+                <td class="highrow"></td>
+                <td class="highrow"></td>
+                <td class="highrow text-center"><strong>Subtotal</strong></td>
+                <td class="highrow text-right">{{total | currency}}</td>
+              </tr>
+              <tr>
+                <td class="emptyrow"></td>
+                <td class="emptyrow"></td>
+                <td class="emptyrow text-center"><strong>Shipping</strong></td>
+                <td class="emptyrow text-right">{{shipping | currency}}</td>
+              </tr>
+              <tr>
+                <td class="emptyrow"><i class="fa fa-barcode iconbig"></i></td>
+                <td class="emptyrow"></td>
+                <td class="emptyrow text-center"><strong>Total</strong></td>
+                <td class="emptyrow text-right">{{total+shipping | currency}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pull-right">
+    <a class="btn btn-outlined btn-theme btn-sm" data-wow-delay="0.7s" ng-click="confirmOrder()">Purchase Now</a>
+  </div>

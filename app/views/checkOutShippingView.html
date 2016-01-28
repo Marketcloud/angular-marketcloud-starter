@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <form class="form-horizontal" role="form">
+      <fieldset>
+        <p>
+          <a href="" class="btn-xs thatBtn btn-outlined btn-sm" data-wow-delay="0.7s" ng-click="checkAddresses()">Your Addresses</a>
+        </p>
+        <!-- Form Name -->
+        <legend>Indirizzo per la spedizione</legend>
+
+        <!-- Text input-->
+        <div class="form-group">
+          <label class="col-sm-1 control-label" >Nominativo</label>
+          <div class="col-sm-12">
+            <input type="text" placeholder="Nominativo" ng-model="shippingInfos.full_name" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Text input-->
+        <div class="form-group">
+          <label class="col-sm-1 control-label" >Indirizzo</label>
+          <div class="col-sm-12">
+            <input type="text" placeholder="Indirizzo" ng-model="shippingInfos.address1" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Text input-->
+        <div class="form-group">
+          <label class="col-sm-1 control-label" >City</label>
+          <div class="col-sm-4">
+            <input type="text" placeholder="City"  ng-model="shippingInfos.city" class="form-control" required>
+          </div>
+
+          <label class="col-sm-3 control-label">Postcode</label>
+          <div class="col-sm-4">
+            <input type="text" placeholder="Post Code" ng-model="shippingInfos.postal_code" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Text input-->
+        <div class="form-group">
+          <label class="col-sm-1 control-label" >Country</label>
+          <div class="col-sm-12">
+            <input type="text" placeholder="Country" ng-model="shippingInfos.country" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="pull-right">
+              <button type="submit" class="btn btn-default" ng-Click="cancelFromShipping()">Cancel</button>
+              <button type="submit" class="btn btn-primary" ng-Click="saveFromShipping()" ng-disabled="!validate()">Save</button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<form class="login-form" ng-submit="login()">
+  <h2>Form Login</h2>
+  <label for="inputEmail" class="sr-only">Email</label>
+  <input type="text" id="inputEmail" class="form-control" placeholder="Username" ng-model="email" required autofocus>
+  <br>
+  <label for="inputPassword" class="sr-only">Password</label>
+  <input type="password" id="inputPassword" class="form-control" placeholder="Password" required  ng-model="password">
+  <br>
+  <div ng-show="error" class="alert alert-danger" role="alert">Autenticazione Fallita!</div>
+  <input type="submit" value="Submit" class="btn btn-lg btn-primary btn-block" type="submit"> </input>
+</form>

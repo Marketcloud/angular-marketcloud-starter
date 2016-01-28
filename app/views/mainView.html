@@ -1,0 +1,52 @@
+<div class="row">
+
+  <div class="col-md-3">
+    <p class="lead">Shop Name</p>
+    <div class="list-group" ng-repeat="cat in categories">
+      <a href="#/" onselectstart="return false" ng-class="{active: isActive(cat.id)}" ng-click="filter(cat.id)" class="list-group-item"><span class="badge">{{countProductsByCategoryId(cat.id)}}</span>{{cat.name}}</a>
+    </div>
+  </div>
+
+  <div class="col-md-9">
+
+        <div class="row carousel-holder">
+
+          <div class="col-md-12">
+            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+            </div>
+          </div>
+
+        </div>
+
+    <div class="row">
+      <div class="col-sm-4 col-lg-4 col-md-4" ng-repeat="product in productsToShow">
+        <div class="thumbnail">
+           <img ng-if="product.images[0] != undefined" class ="imgPreview img-thumbnail" src="{{product.images[0]}}" alt="Image not found" ng-click="toConsole(product)" />
+           <img ng-if="product.images[0] == undefined" class ="imgPreview img-thumbnail" src="images/uTried.jpg" alt="Image not found" ng-click="toConsole(product)" />
+
+          <div class="caption">
+            <p><b>Autore:</b> {{product.author}}</p>
+            <p><b>Prezzo:</b> {{product.price}}</p>
+            <p><b>Editore:</b> {{product.editor}}</p>
+            <!--  <p><b>{{product.cover}}</b></p> -->
+            <b>Genere:</b> {{product.genre}}</p>
+            <b>Pagine:</b> {{product.pages}}</p>
+            <div class="buttons">
+            <button type="button" ng-click="clickToOpen(product);" class="btn btn-default" style="float: left;">
+              <span class="glyphicon glyphicon-search" aria-hidden="true"  ></span>
+            </button>
+
+            <button type="button" ng-click="addToCart(product)" class="btn btn-default" style="float: right;">
+              <span  class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+            </button>
+
+            </div>
+            <br>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

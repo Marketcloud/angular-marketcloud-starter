@@ -1,0 +1,29 @@
+<!-- !!!! IL CONTROLLER è checkOutShippingCtrl.js !!!!-->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12"><h2>Address</h2></div>
+  </div>
+  <div class="row">
+    <div class="address-block col-lg-3 col-lg-offset-1 col-md-4 col-sm-6" ng-repeat="address in addresses">
+      <div class="panel panel-default">
+        <div class="panel-heading addr-block-title"> {{address.full_name}}</div>
+        <div class="panel-body address-view addr-block-body">
+          <div>{{address.address1}}</div>
+          <span>{{address.city}}</span>
+          <div>{{address.country}}</div>
+          <div>
+            <span>{{address.email}} </span>
+          </div>
+        </div><!---address-->
+        <div class="addr-block-buttons">
+					<span>
+						<div class="btn btn-danger btn-xs" role="button" ng-click="deleteAddress(address.id)">Delete</div>
+            <div class="btn btn-info btn-xs" role="button" ng-click="selectAddress(address)">Select</div>
+					</span>
+        </div><!---buttons-->
+      </div><!---panel-->
+
+    </div><!---address-block-->
+    <div ng-show="addresses.length == 0"><blockquote><p class="text-center">No addresses found </p></blockquote></div>
+  </div>
+</div>

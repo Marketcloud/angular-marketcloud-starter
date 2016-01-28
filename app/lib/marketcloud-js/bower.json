@@ -1,0 +1,34 @@
+{
+  "name": "marketcloud-js",
+  "version": "0.0.1",
+  "authors": [
+    "Mattia Alfieri m.alfieri@marketcloud.it"
+  ],
+  "description": "Javascript bindings for Marketcloud API.",
+  "main": "dist/marketcloud.min.js",
+  "keywords": [
+    "marketcloud",
+    "ecommerce",
+    "api",
+    "client",
+    "sdk"
+  ],
+  "license": "MIT",
+  "homepage": "www.marketcloud.it",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/components",
+    "test",
+    "tests",
+    "lib",
+    "src"
+  ],
+  "dependencies": {
+   
+  },
+  "moduleType": [
+    "globals"
+  ]
+}
