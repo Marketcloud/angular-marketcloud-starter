@@ -10,9 +10,12 @@ Example project using AngularJS and marketcloud.js to build an eCommerce web app
 
 Fork this repository and then clone it from your local environment, then install its dependencies by running
 
-`
-npm install && bower install
-`
+`npm install && bower install`
+
+## Setup Public Key
+
+Go on `app/scripts/services/mcFactory.js` and change `marketcloud.public` to your public key value.
+This can be generated using your [Marketcloud dashboard](http://www.marketcloud.it)
 
 ## Build & development
 
