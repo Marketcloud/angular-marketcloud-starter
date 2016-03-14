@@ -14,7 +14,7 @@ Fork this repository and then clone it from your local environment, then install
 
 ## Setup Public Key
 
-Go on `app/scripts/services/mcFactory.js` and change `marketcloud.public` to your public key value.
+Edit `app/scripts/services/mcFactory.js` changing `marketcloud.public` to your actual app's public key.
 This can be generated using your [Marketcloud dashboard](http://www.marketcloud.it)
 
 ## Build & development
