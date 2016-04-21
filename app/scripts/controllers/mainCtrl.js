@@ -51,6 +51,7 @@ angular.module('provaMrkCldApp')
     //Funzione per aprire un popup con i dettagli del prodotto
     $scope.clickToOpen = function (product) {
       $scope.actualProduct = product;
+      $log.info(product)
       $scope.actualQuantity = 1;
       $uibModal.open({
         animation: 1,
@@ -70,20 +71,51 @@ angular.module('provaMrkCldApp')
       return counter
     }
 
+
+    $scope.isAvailable = function(stock_type, stock_level, stock_status, quantity) {
+      $log.info("stock_type is "+stock_type)
+      $log.info("stock_level is "+stock_level)
+      $log.info("stock_status is "+stock_status)
+
+      if(stock_type == "infinite") {
+        $log.info("stock_type is infinite")
+        return true
+      }
+
+      if (stock_type == "track") {
+        if(stock_level == 0) {
+          $log.info("stock_type is track, stock_level is 0")
+          return false
+        } else {
+          $log.info("stock_type is track, stock_level is "+stock_level)
+
+          if (quantity > stock_level) {
+            $log.error("quantity > stock_level !!!" )
+            $log.info("quantity was "+quantity)
+            $log.info("stock_level was "+stock_level)
+            return false
+          }
+          return true;
+        }
+      }
+
+      if (stock_type == "status") {
+        if(stock_status == "in_stock") {
+          $log.info("stock_type is status, stock_status is in_stock")
+          return true
+        } else {
+          $log.info("stock_type is status, stock_status is out_stock")
+          return false
+        }
+      }
+      $log.error("ERROR. YOU SHOULD NOT BE HERE. GO AWAY HUMAN.")
+      return false
+    }
+
+
     $scope.isActive = function(id) {
       return $scope.filterId == id
     };
-
-    /*
-    $scope.filterOLD = function(idCategoria){
-      if($scope.filterId == idCategoria) {
-        $scope.showAll = true
-        $scope.filterId = ""
-      } else {
-        $scope.showAll = false
-        $scope.filterId = idCategoria
-      }
-    }*/
 
     $scope.filter = function (idCategoria) {
       $log.info("Filter")

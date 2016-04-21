@@ -21,15 +21,13 @@
           </select>
         </div>
         <div class="input-append pull-right">
-          <!-- use type=tel instead of  to prevent spinners -->
           <input
             class="span3 text-center" type="tel"
             ng-model="actualQuantity"
             ng-change="" readonly disabled />
           <button
             class="btn btn-success" type="button"
-            ng-disabled="actualQuantity >= actualProduct.stock_level"
-            ng-model="firstName"
+            ng-disabled="!isAvailable(actualProduct.stock_type, actualProduct.stock_level, actualProduct.stock_status, actualQuantity)"
             ng-click="(actualQuantity = actualQuantity+1);">+
           </button>
           <button
@@ -40,7 +38,6 @@
         </div><br><br>
         <button class="btn btn-success  btn-block" ng-click="addToCart(actualProduct, actualQuantity)">Add to cart</button>
       </div>
-
     </div>
     <div class="col-xs-12" style="margin-top:20px;">
       <div class="product-description">

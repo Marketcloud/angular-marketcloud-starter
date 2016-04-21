@@ -134,14 +134,14 @@ angular.module('provaMrkCldApp')
       $log.log("Click!")
 
       console.log("am I logged? "+$rootScope.loggedIn)
-      if($rootScope.loggedIn != undefined || $rootScope.loggedIn ) {
-        //$location.path("/checkOutAddress");
-        $window.location.assign('/#/checkOutAddress');
-      } else {
+
+      if(!$rootScope.loggedIn) {
         alert("Effettua il login prima di fare checkout!")
-        $rootScope.loggedIn = false
-        //$location.path("/login");
         $window.location.assign('/#/login');
+        return
+      }
+      if($rootScope.loggedIn != undefined || $rootScope.loggedIn ) {
+        $window.location.assign('/#/checkOutAddress');
       }
     }
 
