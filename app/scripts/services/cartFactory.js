@@ -403,6 +403,5 @@ angular.module('provaMrkCldApp')
     }
     //FINE----DEBUG-----
 
-
     return exposeCart;
   });

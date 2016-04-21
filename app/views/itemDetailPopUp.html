@@ -36,13 +36,17 @@
             ng-click="(actualQuantity = actualQuantity-1);">-
           </button>
         </div><br><br>
-        <button class="btn btn-success  btn-block" ng-click="addToCart(actualProduct, actualQuantity)">Add to cart</button>
+        <button class="btn btn-success  btn-block"
+                ng-disabled="!isAvailable(actualProduct.stock_type, actualProduct.stock_level, actualProduct.stock_status, 1)"
+                ng-click="addToCart(actualProduct, actualQuantity)">Add to cart
+        </button><br>
+        <div class="warning" ng-show="!isAvailable(actualProduct.stock_type, actualProduct.stock_level, actualProduct.stock_status, 1)"> PRODOTTO NON DISPONIBILE </div>
       </div>
     </div>
     <div class="col-xs-12" style="margin-top:20px;">
       <div class="product-description">
         <h4>Product description</h4>
-        <p>{{actualProduct.description}}</p>
+        <p>{{actualProduct.description | htmlToPlaintext}}</p>
       </div>
     </div>
   </div>

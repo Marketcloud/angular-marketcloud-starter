@@ -36,7 +36,7 @@
                 ng-change="" readonly disabled />
               <button
                 class="btn btn-success" type="button"
-                  ng-disabled="product.quantity >= product.stock_level"
+                ng-disabled="!isAvailable(product.stock_type, product.stock_level, product.stock_status, product.quantity, product)"
                 ng-model="firstName"
                 ng-click="(product.quantity = product.quantity+1); updater(product.id,product.quantity);">+
               </button>

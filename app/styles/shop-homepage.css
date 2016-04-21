@@ -57,15 +57,12 @@ button.qty-change{
 }
 
 .thumbnail img {
-    width: 100%;
+    height: 150px;
 }
 
 img{
   border:0;
   max-width:100%; /* Part 1:Set a maxium relative to the parent */
-  width:auto\9; /* IE7-8 need help adjusting responsive images */
-  height:auto; /* Part 2:Scale the height according to the width,
-        otherwise you get stretching */
   -ms-interpolation-mode:bicubic
 }
 
@@ -89,7 +86,7 @@ footer {
 }
 
 .imgPreview {
- // max-height: 180px;
+  height: 150px;
   max-width: 40px;
   outline: 1px solid darkorange;
 }
@@ -306,4 +303,12 @@ RECAP_ORDER
 
 .table > tbody > tr > .highrow {
   border-top: 3px solid;
+}
+
+.warning {
+  text-align: center;
+  font-weight: 900;
+  font-weight: bold;
+  color: black;
+  background-color: red;
 }

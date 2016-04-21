@@ -44,4 +44,9 @@ angular
         redirectTo: '/'
       });
     Stripe.setPublishableKey('pk_test_o3U6ovC4zG8SXiEPsvFLSQ2E');
-  });
+  })
+  .filter('htmlToPlaintext', function() {
+    return function(text) {
+      return  text ? String(text).replace(/<[^>]+>/gm, '') : '';
+    }})
+;

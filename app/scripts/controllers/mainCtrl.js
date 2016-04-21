@@ -12,6 +12,13 @@ angular.module('provaMrkCldApp')
 
     $scope.filterId = ""
 
+    $scope.shopName = marketcloud.name
+
+    if($scope.shopName == undefined) {
+      $scope.shopName = "Undefined Shop"
+    }
+    //$scope.$applyAsync()
+
     if(!/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent) && $rootScope.fromUpdatedCart){
       Notification.success({message: 'Salvataggio automatico del carrello ', delay: 2500});
       $rootScope.fromUpdatedCart = false;
@@ -72,10 +79,7 @@ angular.module('provaMrkCldApp')
     }
 
 
-    $scope.isAvailable = function(stock_type, stock_level, stock_status, quantity) {
-      $log.info("stock_type is "+stock_type)
-      $log.info("stock_level is "+stock_level)
-      $log.info("stock_status is "+stock_status)
+    $rootScope.isAvailable = function(stock_type, stock_level, stock_status, quantity, product) {
 
       if(stock_type == "infinite") {
         $log.info("stock_type is infinite")
@@ -89,8 +93,8 @@ angular.module('provaMrkCldApp')
         } else {
           $log.info("stock_type is track, stock_level is "+stock_level)
 
-          if (quantity > stock_level) {
-            $log.error("quantity > stock_level !!!" )
+          if (quantity >= stock_level) {
+            $log.info("quantity > stock_level !!!" )
             $log.info("quantity was "+quantity)
             $log.info("stock_level was "+stock_level)
             return false
@@ -108,7 +112,19 @@ angular.module('provaMrkCldApp')
           return false
         }
       }
-      $log.error("ERROR. YOU SHOULD NOT BE HERE. GO AWAY HUMAN.")
+
+      if(stock_type == undefined)
+      { return true }
+
+
+
+     /* $log.error("ERROR. YOU SHOULD NOT BE HERE. GO AWAY HUMAN.")
+       $log.info("stock_type is "+stock_type)
+       $log.info("stock_level is "+stock_level)
+       $log.info("stock_status is "+stock_status)
+      $log.info(product)*/
+      $log.error("---------------------------------------------.")
+
       return false
     }
 
@@ -185,7 +201,6 @@ angular.module('provaMrkCldApp')
       $log.log(product);
     };
 //fine--------------------------------- DEBUG ----------------------------------
-
   });
 
 

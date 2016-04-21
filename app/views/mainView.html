@@ -1,7 +1,7 @@
 <div class="row">
 
   <div class="col-md-3">
-    <p class="lead">Shop Name</p>
+    <p class="lead">{{shopName}}</p>
     <div class="list-group" ng-repeat="cat in categories">
       <a href="#/" onselectstart="return false" ng-class="{active: isActive(cat.id)}" ng-click="filter(cat.id)" class="list-group-item"><span class="badge">{{countProductsByCategoryId(cat.id)}}</span>{{cat.name}}</a>
     </div>
@@ -25,18 +25,22 @@
            <img ng-if="product.images[0] == undefined" class ="imgPreview img-thumbnail" src="images/uTried.jpg" alt="Image not found" ng-click="toConsole(product)" />
 
           <div class="caption">
-            <p><b>Autore:</b> {{product.author}}</p>
+            <p><b>Nome:</b> {{product.name}}</p>
             <p><b>Prezzo:</b> {{product.price}}</p>
-            <p><b>Editore:</b> {{product.editor}}</p>
+            <p><b>Field1:</b> {{product.editor}}</p>
             <!--  <p><b>{{product.cover}}</b></p> -->
-            <b>Genere:</b> {{product.genre}}</p>
-            <b>Pagine:</b> {{product.pages}}</p>
+            <b>Field2:</b> {{product.genre}}</p>
+            <b>Field3:</b> {{product.pages}}</p>
             <div class="buttons">
             <button type="button" ng-click="clickToOpen(product);" class="btn btn-default" style="float: left;">
               <span class="glyphicon glyphicon-search" aria-hidden="true"  ></span>
             </button>
 
-            <button type="button" ng-click="addToCart(product)" class="btn btn-default" style="float: right;">
+            <button type="button"
+                    ng-click="addToCart(product)"
+                    class="btn btn-default"
+                    ng-disabled="!isAvailable(product.stock_type, product.stock_level, product.stock_status, 1, product)"
+                    style="float: right;">
               <span  class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
             </button>
 

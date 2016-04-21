@@ -9,7 +9,7 @@ angular.module('provaMrkCldApp')
     console.log("$rootScope setted\n $rootScope says : " + $rootScope.greet + " marketcloud Factory!");
 
     //console.log("MarketCloud Service (scambio key)" );
-    marketcloud.public = 'ba952728-a428-466b-94a3-72effb6c4ace';
+    marketcloud.public = '691ad512-cd1d-420e-8ba0-433b2b02a357';
     //console.log("Market cloud public key setted " +marketcloud.public);
     return marketcloud;
   });
