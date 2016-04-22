@@ -49,7 +49,7 @@ angular.module('provaMrkCldApp')
     $scope.address_info = function(){
       paymentFactory.printAddresRecap(1)
     }
-    //fine --------------------------------- DEBUG --------------------------------------
+    // --------------------------------- DEBUG --------------------------------------
 
   }).directive('navBar', function () { //directive x l'inserimento della navbar
   return {

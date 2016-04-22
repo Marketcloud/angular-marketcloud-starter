@@ -13,13 +13,17 @@
       <div class="product-options">
         <span class="price">Prezzo: {{actualProduct.price | currency}}</span>
 
-        <div class="form-group">
-          <label>Format</label>
-          <select class="form-control" disabled>
-            <option value="1">Digital</option>
-            <option value="1">Paper</option>
+        <div class="form-group" ng-repeat="(v_name,v_values) in actualProduct.variantsDefinition">
+          <label>
+            {{v_name}}
+          </label>
+          <select ng-model="selectedOptions[v_name]" ng-options="item as item for item in v_values" ng-click="printSelectedOptions()">
           </select>
         </div>
+        <div ng-show = "actualProduct.has_variants">
+          Variante Selezionata = {{variantId}} <br>
+        </div>
+
         <div class="input-append pull-right">
           <input
             class="span3 text-center" type="tel"
@@ -37,10 +41,16 @@
           </button>
         </div><br><br>
         <button class="btn btn-success  btn-block"
-                ng-disabled="!isAvailable(actualProduct.stock_type, actualProduct.stock_level, actualProduct.stock_status, 1)"
+                ng-show="isAvailable(actualProduct.stock_type, actualProduct.stock_level, actualProduct.stock_status, 1)"
+                ng-disabled="!checkVariantsSelected()"
                 ng-click="addToCart(actualProduct, actualQuantity)">Add to cart
         </button><br>
         <div class="warning" ng-show="!isAvailable(actualProduct.stock_type, actualProduct.stock_level, actualProduct.stock_status, 1)"> PRODOTTO NON DISPONIBILE </div>
+        <br><button class="btn btn-danger  btn-block"
+                ng-click="modalDismiss()">Close
+        </button><br>
+
+
       </div>
     </div>
     <div class="col-xs-12" style="margin-top:20px;">
