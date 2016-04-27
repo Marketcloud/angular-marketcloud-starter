@@ -4,7 +4,7 @@
  */
 angular.module('provaMrkCldApp')
   .controller('checkOutBilling', function ($scope, $rootScope, marketcloud, cartFactory, $log, $window, paymentFactory) {
-    console.log("checkOutBilling controller")
+   // console.log("checkOutBilling controller")
     if (($rootScope.loggedIn == undefined || !$rootScope.loggedIn)) {
       $window.location.assign('/#');
     }

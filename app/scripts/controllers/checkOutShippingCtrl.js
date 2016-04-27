@@ -4,7 +4,7 @@
  */
 angular.module('provaMrkCldApp')
   .controller('checkOutShipping', function ($scope, $rootScope, cartFactory, $log, $location, $window, paymentFactory, $uibModal, $uibModalStack) {
-    $log.log("checkOutCtrl Controller!")
+   // $log.log("checkOutCtrl Controller!")
     if (($rootScope.loggedIn == undefined || !$rootScope.loggedIn)) {
       $window.location.assign('/#');
       return

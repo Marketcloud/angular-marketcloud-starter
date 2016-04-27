@@ -2,7 +2,7 @@
 
 angular.module('provaMrkCldApp')
   .controller('navBarCtrl', function (cartFactory, $scope, $cookies, $rootScope, $window, $log, marketcloud, Notification, paymentFactory) {
-    $log.log("$rootScope: " + $rootScope.greet + " navBarCtrl Controller!");
+   // $log.log("$rootScope: " + $rootScope.greet + " navBarCtrl Controller!");
 
     $scope.cartCount = 0;
     //Funzione per il logOut
@@ -43,7 +43,6 @@ angular.module('provaMrkCldApp')
 
     $scope.lastAddress_info = function(){
       paymentFactory.printAddresRecap(0)
-
     }
 
     $scope.address_info = function(){

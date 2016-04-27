@@ -5,8 +5,8 @@
   </div>
   <div class="row">
     <div class="col-lg-7" style="margin-bottom:20px;">
-      <img ng-if="actualProduct.images[0] != undefined" class ="imgNoPreview" src="{{actualProduct.images[0]}}" alt="Image not found" />
-      <img ng-if="actualProduct.images[0] == undefined" class ="imgNoPreview" src="images/uTried.jpg" alt="Image not found"  />
+      <img ng-if="actualProduct.images[0] != undefined" class ="imgNoPreview" ng-src="{{actualProduct.images[0]}}" alt="Image not found" />
+      <img ng-if="actualProduct.images[0] == undefined" class ="imgNoPreview" ng-src="images/uTried.jpg" alt="Image not found"  />
     </div>
     <div class="col-lg-5">
 
@@ -17,9 +17,10 @@
           <label>
             {{v_name}}
           </label>
-          <select ng-model="selectedOptions[v_name]" ng-options="item as item for item in v_values" ng-click="printSelectedOptions()">
+          <!--<select ng-model="selectedOptions[v_name]" ng-options="item as item for item in v_values" ng-click="printSelectedOptions()"> -->
+          <select ng-model="selectedOptions[v_name]" ng-options="item for item in v_values" ng-click="printSelectedOptions()">
           </select>
-        </div>
+        </div> <!--STOP-->
         <div ng-show = "actualProduct.has_variants">
           Variante Selezionata = {{variantId}} <br>
         </div>
@@ -49,7 +50,6 @@
         <br><button class="btn btn-danger  btn-block"
                 ng-click="modalDismiss()">Close
         </button><br>
-
 
       </div>
     </div>

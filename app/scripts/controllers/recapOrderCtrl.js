@@ -34,9 +34,13 @@ angular.module('provaMrkCldApp')
 
     //Metodo per confermare l'ordine
     $scope.doCheckout = function() {
-      console.warn("Entering doCheckout \n cart is ", cartFactory.getLocalCart().items)
+
+      console.warn("Entering doCheckout \n cart is ", angular.copy(cartFactory.getLocalCart().items),
+        "shipping id is "+paymentFactory.getLastShippingInfos().id
+        +"and billing id is " +paymentFactory.getLastBillingInfos().id)
+
       var the_order = {
-        items :cartFactory.getLocalCart().items,
+        items : angular.copy(cartFactory.getLocalCart().items),
         shipping_address_id : paymentFactory.getLastShippingInfos().id,
         billing_address_id : paymentFactory.getLastBillingInfos().id
       }
@@ -56,8 +60,10 @@ angular.module('provaMrkCldApp')
       }, function (isConfirm) {
         if (isConfirm) {
           marketcloud.orders.create(the_order,function(err,created_order){
-            if (err)
-              $log.error("an error has occurred while creating the order",err)
+            if (err) {
+              alert("Critical error during order creation (see log)")
+              $log.error("an error has occurred while creating the order", err)
+            }
             else{
               swal("Completato", "Ordine completato! \n verrai reindirizzato alla pagina principale", "success");
               $log.info("OK Callback di marketcloud.orders.create")

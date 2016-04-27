@@ -6,7 +6,7 @@
  */
 angular.module('provaMrkCldApp')
   .controller('cartCtrl', function ($scope, $cookies, $rootScope, marketcloud, cartFactory, $log, $window) {
-    $log.log("$rootScope: " + $rootScope.greet + " cartCtrl Controller!");
+    //$log.log("$rootScope: " + $rootScope.greet + " cartCtrl Controller!");
     $scope.carrelloAttuale = cartFactory.getLocalCart();
     $log.info("$scope.carrelloAttuale is ", $scope.carrelloAttuale)
 
@@ -38,9 +38,10 @@ angular.module('provaMrkCldApp')
 
     /**
      * Invoca il metodo (presente nella factory) per eliminare un prodotto dal carrello
+     * //TODO: SUPPORTO PER idVariante
      * @param id
      */
-    $scope.removeProduct = function (id) {
+    $scope.removeProduct = function (id, variantId) {
       swal({
         title: "Conferma",
         text: "Vuoi Eliminare questo prodotto?",
@@ -53,11 +54,14 @@ angular.module('provaMrkCldApp')
         closeOnCancel: false
       }, function (isConfirm) {
         if (isConfirm) {
-          $log.log("$scope.removeProduct = function (" + id + ") {")
-          cartFactory.removeProduct(id); //$broadcast da cartService -> .on qua sotto x aggiornare carrello cartCtrl
-          for (var i = 0; i < $scope.updateList .length; i++)
-            if ($scope.updateList [i].product_id === id) {
-              $scope.updateList .splice(i, 1);
+
+          $log.log("product with id "+id+ " and variantId " +variantId)
+
+          cartFactory.removeProduct(id, variantId); //$broadcast da cartService -> .on qua sotto x aggiornare carrello cartCtrl
+
+          for (var i = 0; i < $scope.updateList.length; i++)
+            if ($scope.updateList[i].product_id === id) {
+              $scope.updateList.splice(i, 1);
               break;
             }
           swal("Ok", "Prodotto rimosso!", "success");
@@ -70,8 +74,7 @@ angular.module('provaMrkCldApp')
     //Aggiorna alcune variabili ogni volta che il carrello viene aggiornato
     $scope.$on('cartUpdated', function (event, count, price) {
       $scope.getCart();
-      //  $log.log("navBarCtrl -> Received cartUpdated Broadcast");
-      //  $log.log("CARTCTRL : Received totalItems -> " + count);
+
       $scope.totalItems = count;
       // $log.log("CARTCTRL : Received price -> " + price);
       $scope.totalPrice = price;
@@ -79,7 +82,7 @@ angular.module('provaMrkCldApp')
     });
 
     /**
-     chiede il carrello corrente alla factory
+     Chiede il carrello corrente alla factory
      */
     $scope.getCart = function () {
       $log.log("$scope.getCart()");
@@ -96,15 +99,28 @@ angular.module('provaMrkCldApp')
 
 
     //Metodo per aggiornare l'array con le modifiche alle quantità
-    $scope.updater = function (id, quantity) {
+    //TODO: AGGIUNGERE SUPPORTO A idVariante
+    $scope.updater = function (id, quantity, variantId) {
+
+      $log.log("il carrello attuale è ",cartFactory.getLocalCart())
+      $log.log("I dati ricevuti dall'updater sono " +id+ ", quantity: " +quantity+" e variantId " +variantId)
+
       var obj = new Object();
       obj.product_id = id;
       obj.quantity = quantity;
+      obj.variant_id = variantId
+
+      $log.log("Retrieving Cart")
+      var cart = cartFactory.getLocalCart
+      for (var i = 0; i < cart.length; i++) {
+        $log.log(cart[i])
+      }
       $log.log("modificato -> " + angular.toJson(obj, true));
 
       for (var i = 0; i < $scope.updateList.length; i++) {
-        if ($scope.updateList [i].product_id == id) {
-          $scope.updateList [i].quantity = quantity;
+        if ($scope.updateList[i].product_id == id) {
+          $scope.updateList[i].quantity = quantity;
+          $scope.updateList[i].variant_id = variantId
           $log.log("L'oggetto era già stato modificato precedentemente\n  > [i].quantity = " + quantity);
           $scope.saveCart();
           return;
@@ -115,11 +131,8 @@ angular.module('provaMrkCldApp')
       $scope.saveCart();
     }
 
-    $scope.sendUpdatedCartToServer = function () {
-
-    }
-
     //cambio di view - salva lo stato del carrello nel caso le quantità siano state modificate
+    //TODO: VERIFICA ARRELLO AGGIORNATO CON VARIANTI
     $scope.$on('$locationChangeStart', function (event) {
       if ($scope.updateList.length != 0) {
         $log.warn("$scope.$on('$locationChangeStart' \n itemsService.updateCart($scope.updateList);");
@@ -130,11 +143,8 @@ angular.module('provaMrkCldApp')
       }
     });
 
+    //Moves to checkout window
     $scope.checkOutClick = function() {
-      $log.log("Click!")
-
-      console.log("am I logged? "+$rootScope.loggedIn)
-
       if(!$rootScope.loggedIn) {
         alert("Effettua il login prima di fare checkout!")
         $window.location.assign('/#/login');
@@ -153,5 +163,5 @@ angular.module('provaMrkCldApp')
       $log.log("Carrello attuale is ", $scope.carrelloAttuale);
       $log.log("$scope.updateList is ", $scope.updateList);
     }
-    //fine-----------------------------DEBUG------------------------
+    //--------------------------------------------------------------
   });

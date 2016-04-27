@@ -5,7 +5,7 @@
  */
 angular.module('provaMrkCldApp')
   .controller('signupCtrl', function ($scope, $rootScope, marketcloud, $window, $log, Notification) {
-      $log.log("$rootScope: " + $rootScope.greet + " signupCtrl Controller!");
+      //$log.log("$rootScope: " + $rootScope.greet + " signupCtrl Controller!");
 
       if(!/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent) && $rootScope.fromUpdatedCart){
         Notification.success({message: 'Salvataggio automatico del carrello ', delay: 2500});

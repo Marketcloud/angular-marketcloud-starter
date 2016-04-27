@@ -11,7 +11,7 @@
  */
 angular.module('provaMrkCldApp')
   .factory('paymentFactory', function ($rootScope, $log, $window ) {
-    console.log("$rootScope setted\n $rootScope says : " + $rootScope.greet + " paymentFactory!");
+   // console.log("$rootScope setted\n $rootScope says : " + $rootScope.greet + " paymentFactory!");
     var expose = {};
 
     var addressesList = []

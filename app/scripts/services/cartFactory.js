@@ -199,17 +199,19 @@ angular.module('provaMrkCldApp')
 
         var oggettiDaRimuovere = [];
         for (var z = 0; z < lunghezzaArray; z++) {
-          var lastId = {'product_id': localCartLoggedUser.items[z].id};
+          var lastId = {'product_id': localCartLoggedUser.items[z].id, 'variant_id' : localCartLoggedUser.items[z].variant_id};
           if (lastId.product_id == undefined) { //CHECK PER BUG IN SERVER
             $log.warn("lastId was undefined")
-            lastId = {'product_id': localCartLoggedUser.items[z].product_id};
+            lastId = {'product_id': localCartLoggedUser.items[z].product_id, 'variant_id' : localCartLoggedUser.items[z].variant_id};
           }
           oggettiDaRimuovere.push(lastId);
         }
 
         marketcloud.carts.remove(remoteCartId, oggettiDaRimuovere, function (err, data) {
+          $log.warn("remoteCartId è " +remoteCartId +", oggetti da rimuovere è ",oggettiDaRimuovere)
           if (data.items.length != 0) {
-            alert("Errore critico in svuotaggio carrello")
+            alert("Errore critico in svuotaggio carrello (vedi log)")
+            $log.error(err)
             return;
           }
           localCartLoggedUser = data;
@@ -253,7 +255,7 @@ angular.module('provaMrkCldApp')
       if (!$rootScope.loggedIn) { //utente non loggato
 
         //invio prodotto al server
-        marketcloud.carts.add(remoteCartId, [{product_id: item.id, quantity: item.quantity}], function (err, cart) {
+        marketcloud.carts.add(remoteCartId, [{product_id: item.id, quantity: item.quantity, variant_id: item.variant}], function (err, cart) {
           if (err) {
             alert("CRITICAL ERROR in Adding item to remote cart\n")
             $log.log(err)
@@ -265,11 +267,15 @@ angular.module('provaMrkCldApp')
           $rootScope.$broadcast('cartUpdated', getCount(), exposeCart.getPrice());
         });
       } else { //utente loggato
-        $log.info("utente loggato: adding ", item + " into cart " + remoteCartId);
+        $log.log(item)
+        $log.info("utente loggato: adding VEDI SOPRA into cart " + remoteCartId);
         //invio prodotto al server
-        marketcloud.carts.add(remoteCartId, [{product_id: item.id, quantity: item.quantity}], function (err, cart) {
-          if (err)
-            alert("CRITICAL ERROR in Adding item to remote cart\n", err)
+        marketcloud.carts.add(remoteCartId, [{product_id: item.id, quantity: item.quantity, variant_id: item.variant}], function (err, cart) {
+          if (err) {
+            alert("CRITICAL ERROR in Adding item to remote cart\n")
+            $log.log(err)
+            $log.log(item.id + " - quantity : " + item.quantity + " - variant : " + item.variant)
+          }
           else {
             localCartLoggedUser = cart;
           }
@@ -281,9 +287,10 @@ angular.module('provaMrkCldApp')
     /*
     Metodo per rimuovere un singolo prodotto dal carrello attuale (in base a remoteCartId);
      */
-    exposeCart.removeProduct = function (id) {
-      $log.log("Rimuovo oggetto con id " + id);
-      marketcloud.carts.remove(remoteCartId, [{'product_id': id}], function (err, data) {
+    exposeCart.removeProduct = function (id, variantId) {
+      $log.log("sono in exposeCart.removeProduct")
+      $log.log("Rimuovo oggetto con id " + id + " e variantId " +variantId);
+      marketcloud.carts.remove(remoteCartId, [{'product_id': id, 'variant_id': variantId}], function (err, data) {
         if (err) {
           alert("Errore critico in rimozione prodotto con id " + id);
           return;
@@ -343,7 +350,7 @@ angular.module('provaMrkCldApp')
       var tempArray = []; //conterrà i prodotti da trasferire ma solo con le voci i e quantity in modo da poterlo inviare
       for (var i = 0; i < prodottiDaTrasferire.length; i++) {
         prodottiText += '<li> <span>' + prodottiDaTrasferire[i].quantity + 'x -  ' + prodottiDaTrasferire[i].name + '</span> </li>';
-        var obj = {product_id: prodottiDaTrasferire[i].id, quantity: prodottiDaTrasferire[i].quantity}
+        var obj = {product_id: prodottiDaTrasferire[i].id, quantity: prodottiDaTrasferire[i].quantity, variant_id: prodottiDaTrasferire[i].variant_id }
         tempArray.push(obj);
       }
 
