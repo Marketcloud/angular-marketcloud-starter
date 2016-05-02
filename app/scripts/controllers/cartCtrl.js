@@ -1,14 +1,21 @@
 'use strict'
 /**
- * Controller per la gestione del carrello.
- * In particolare, gestisce gli elementi relativi alla view del carrello poiché la gestione
- * effetiva del carrello è delegata alla factory cartFactory.js
+ * Cart's controller.
+ * Manages the cart's view and calls methods from cartFactory.js
  */
+
 angular.module('provaMrkCldApp')
   .controller('cartCtrl', function ($scope, $cookies, $rootScope, marketcloud, cartFactory, $log, $window) {
     //$log.log("$rootScope: " + $rootScope.greet + " cartCtrl Controller!");
-    $scope.carrelloAttuale = cartFactory.getLocalCart();
-    $log.info("$scope.carrelloAttuale is ", $scope.carrelloAttuale)
+
+    //if page is refreshed user will return to the main page
+    if (!$rootScope.appStarted) {
+      $window.location.assign('/#');
+      return;
+    }
+
+    $scope.actualCart = cartFactory.getLocalCart();
+    $log.info("$scope.actualCart is ", $scope.actualCart)
 
     $scope.totalItems = cartFactory.exposeGetCount();
     $scope.totalPrice = cartFactory.getPrice();
@@ -16,48 +23,46 @@ angular.module('provaMrkCldApp')
     $scope.updateList = [];
 
     /**
-     * Ritorna la conta degli elementi presenti nel carrello
+     * counts how many elements are in the cart.
      */
     $scope.getCount = function () {
       return cartFactory.exposeGetCount();
     }
 
     /*
-     Ritorna il prezzo complessivo degli elementi del carrello
+     returns the total price of the elements in the cart.
      */
     $scope.getPrice = function () {
       return cartFactory.getPrice();
     }
 
     /*
-     Invoca il metodo (presente nella factory) per svuotare il carrello
+     * calls the method in order to clean the cart.
      */
-    $scope.svuotaCarrello = function () {
-      return cartFactory.svuota();
+    $scope.emptyCart = function () {
+      return cartFactory.cleanCart();
     }
 
     /**
-     * Invoca il metodo (presente nella factory) per eliminare un prodotto dal carrello
-     * //TODO: SUPPORTO PER idVariante
-     * @param id
+     * opens a modal and calls the method to delete an item from the cart
+     * @param id  product's id
+     * @variantId variant's id ( 0 if there are no variantS )
      */
     $scope.removeProduct = function (id, variantId) {
       swal({
-        title: "Conferma",
-        text: "Vuoi Eliminare questo prodotto?",
+        title: "Confirm",
+        text: "Do you want to delete this product?",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Si, continua",
-        cancelButtonText: "No, Ho cambiato idea",
+        confirmButtonText: "Yes, continue",
+        cancelButtonText: "No, I changed my mind",
         closeOnConfirm: false,
         closeOnCancel: false
       }, function (isConfirm) {
         if (isConfirm) {
-
           $log.log("product with id "+id+ " and variantId " +variantId)
-
-          cartFactory.removeProduct(id, variantId); //$broadcast da cartService -> .on qua sotto x aggiornare carrello cartCtrl
+          cartFactory.removeProduct(id, variantId);
 
           for (var i = 0; i < $scope.updateList.length; i++)
             if ($scope.updateList[i].product_id === id) {
@@ -71,68 +76,77 @@ angular.module('provaMrkCldApp')
       });
     }
 
-    //Aggiorna alcune variabili ogni volta che il carrello viene aggiornato
+    //Updates some datas after the cart has been updated (items count, items price)
     $scope.$on('cartUpdated', function (event, count, price) {
       $scope.getCart();
 
       $scope.totalItems = count;
-      // $log.log("CARTCTRL : Received price -> " + price);
+
       $scope.totalPrice = price;
+
       $scope.$applyAsync();
     });
 
     /**
-     Chiede il carrello corrente alla factory
+     * Retrieves the cart
      */
     $scope.getCart = function () {
       $log.log("$scope.getCart()");
-      $scope.carrelloAttuale = cartFactory.getLocalCart();
+      $scope.actualCart = cartFactory.getLocalCart();
     }
 
     /*
-     Salva lo stato del carrello
+     Saves the cart's status
      */
     $scope.saveCart = function () {
-      $log.log("Setting cartFactory cart to ", $scope.carrelloAttuale);
-      cartFactory.setLocalCart($scope.carrelloAttuale);
+      $log.log("Setting cartFactory cart to ", $scope.actualCart);
+      cartFactory.setLocalCart($scope.actualCart);
     }
 
-
-    //Metodo per aggiornare l'array con le modifiche alle quantità
-    //TODO: AGGIUNGERE SUPPORTO A idVariante
+     /**
+       * Updates the quantity of one or multiple items.
+       * @param id product's id
+       * @param quantity product's new quantity
+       * @param variantId variant's id (0 if there are no variants)
+       */
     $scope.updater = function (id, quantity, variantId) {
 
-      $log.log("il carrello attuale è ",cartFactory.getLocalCart())
-      $log.log("I dati ricevuti dall'updater sono " +id+ ", quantity: " +quantity+" e variantId " +variantId)
+      $log.log("Actual cart is ",cartFactory.getLocalCart())
+      $log.log("updater received " +id+ ", quantity: " +quantity+" and variantId " +variantId)
 
+      $log.log("Creating object")
       var obj = new Object();
       obj.product_id = id;
       obj.quantity = quantity;
       obj.variant_id = variantId
+      $log.info("Object created : "+angular.toJson(obj, true))
 
       $log.log("Retrieving Cart")
       var cart = cartFactory.getLocalCart
+
+      $log.info("Printing cart")
       for (var i = 0; i < cart.length; i++) {
         $log.log(cart[i])
       }
-      $log.log("modificato -> " + angular.toJson(obj, true));
 
+      //Checks if the new quantity is different from the previous one
       for (var i = 0; i < $scope.updateList.length; i++) {
         if ($scope.updateList[i].product_id == id) {
           $scope.updateList[i].quantity = quantity;
           $scope.updateList[i].variant_id = variantId
-          $log.log("L'oggetto era già stato modificato precedentemente\n  > [i].quantity = " + quantity);
+          $log.log("Object quantity was the same \n  > [i].quantity = " + quantity);
           $scope.saveCart();
           return;
         }
       }
-      $log.log("L'oggetto non era stato modificato precedentemente\n > push(obj)");
+      $log.log("The quantity has been changed. The updatelist will be updated.");
       $scope.updateList.push(obj);
       $scope.saveCart();
     }
 
-    //cambio di view - salva lo stato del carrello nel caso le quantità siano state modificate
-    //TODO: VERIFICA ARRELLO AGGIORNATO CON VARIANTI
+    /**
+     * Checks if user changes the view after a product quantity has been changed.
+     */
     $scope.$on('$locationChangeStart', function (event) {
       if ($scope.updateList.length != 0) {
         $log.warn("$scope.$on('$locationChangeStart' \n itemsService.updateCart($scope.updateList);");
@@ -143,10 +157,10 @@ angular.module('provaMrkCldApp')
       }
     });
 
-    //Moves to checkout window
+    // moves to the checkOut view
     $scope.checkOutClick = function() {
       if(!$rootScope.loggedIn) {
-        alert("Effettua il login prima di fare checkout!")
+        alert("You have to be logged In in order to check out!")
         $window.location.assign('/#/login');
         return
       }
@@ -157,11 +171,14 @@ angular.module('provaMrkCldApp')
 
     //-----------------------------DEBUG---------------------------
     /**
-     * |DEBUG| stampa in console il carrello e la lista delle quantità aggiornate
+     * |DEBUG| prints the cart and the updateList
      */
     $scope.secretDebug = function () {
-      $log.log("Carrello attuale is ", $scope.carrelloAttuale);
+      $log.log("Actual cart is ", $scope.actualCart);
       $log.log("$scope.updateList is ", $scope.updateList);
     }
     //--------------------------------------------------------------
+
+
+
   });

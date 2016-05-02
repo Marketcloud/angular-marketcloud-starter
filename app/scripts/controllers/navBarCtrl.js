@@ -1,20 +1,29 @@
 'use strict'
 
+/**
+ * Manages the navbar view
+ */
+
 angular.module('provaMrkCldApp')
   .controller('navBarCtrl', function (cartFactory, $scope, $cookies, $rootScope, $window, $log, marketcloud, Notification, paymentFactory) {
    // $log.log("$rootScope: " + $rootScope.greet + " navBarCtrl Controller!");
 
     $scope.cartCount = 0;
-    //Funzione per il logOut
+
+    /**
+     * Manages the logout
+     */
     $scope.logMeOut = function () {
       swal({
           title: "Logged Out!",
-          text: "La pagina verrà aggiornata"
+          text: "Page will be updated"
         }, function () {
-          $rootScope.loggedIn = false; //cambiamenti nella view
-          $scope.cookie_del(); //elimino cookie
-          $log.log("loggedOut -> Cookie rimosso")
-          cartFactory.svuota();
+          $rootScope.loggedIn = false; 
+        
+          $scope.cookie_del(); 
+        
+          $log.log("loggedOut -> removing cookies")
+          cartFactory.cleanCart();
           $window.location.reload();
         }
       );
@@ -31,14 +40,14 @@ angular.module('provaMrkCldApp')
 
     //--------------------------------- DEBUG --------------------------------------
     /*
-     |DEBUG| Rimuove tutti i cookie
+     |DEBUG| Removes all cookies
      */
     $scope.cookie_del = function () {
       var cookies = $cookies.getAll();
       angular.forEach(cookies, function (v, k) {
         $cookies.remove(k);
       });
-      $log.log("Cookie rimossi -> ", $cookies);
+      $log.log("Cookie removed -> ", $cookies);
     }
 
     $scope.lastAddress_info = function(){

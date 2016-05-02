@@ -1,9 +1,11 @@
 'use strict'
 /**
- * Gestisce la view per l'inserimento dei dati della carta di credito
+ * Manages the Stripe payment view
  */
 angular.module('provaMrkCldApp')
   .controller('stripePaymentCtrl', function ($scope, $log, paymentFactory, cartFactory, $location, $window, $rootScope) {
+    
+    
     if ($rootScope.loggedIn == undefined || !$rootScope.loggedIn) {
       $window.location.assign('/#');
     }
@@ -19,7 +21,7 @@ angular.module('provaMrkCldApp')
       'expiration': '01/2019'
     }
 
-    //Verifica che tutti i campi siano stati riempiti
+    //checks if all fields are valid
     $scope.validate = function () {
       if (/*$scope.cardInfos.mail == "" ||*/ $scope.cardInfos.card == "" || $scope.cardInfos.CVC == "" ||
         $scope.cardInfos.expiration == "" ) {
@@ -32,22 +34,22 @@ angular.module('provaMrkCldApp')
       return true
     }
 
-    //Verifica che i campi siano riempiti, validi e passa al controller successivo
+    //Checks if all fields have been filled and moves to the next view
     $scope.continue = function () {
       if (!validateCard($scope.cardInfos.card)) {
-        swal("Oops...", "Numero carta errato", "error");
+        swal("Whops...", "Card format error", "error");
         $scope.cardInfos.card = '';
         return
       }
       if (!validateDate($scope.cardInfos.expiration)) {
-        swal("Oops...", "Il formato della scadenza deve essere MM/YYYY", "error");
+        swal("Whops...", "expiration date format must be MM/YYYY", "error");
 
         $scope.cardInfos.expiration = '';
         return
       }
       if(!validateCVC($scope.cardInfos.CVC)){
         $log.info($scope.cardInfos.CVC)
-        swal("Oops...", "Il CVC deve essere composto da 3 numeri", "error");
+        swal("Whops...", "CVC must be 3 numbers long", "error");
         $scope.cardInfos.CVC = '';
         return
       }
@@ -55,12 +57,13 @@ angular.module('provaMrkCldApp')
       $window.location.assign('/#/checkOutBilling');
     }
 
+    //manages the back button
     $scope.back = function () {
       $window.history.back();
     }
 
 
-    //----------------funzioni per validare i campi---------------------------------
+    //------------------------validation functions---------------------------------
     function validateDate(date) {
       var filter = new RegExp("(0[123456789]|10|11|12)([/])([1-2][0-9][0-9][0-9])");
       if (filter.test(date)) {

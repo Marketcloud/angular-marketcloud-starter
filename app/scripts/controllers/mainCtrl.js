@@ -1,10 +1,12 @@
 'use strict'
-
+/**
+ * Manages the shop's main view
+ */
 angular.module('provaMrkCldApp')
   .controller('mainCtrl', function (cartFactory, $scope, $rootScope, marketcloud, $uibModal, $log, Notification, $uibModalStack) {
     //$log.log("$rootScope: "+ $rootScope.greet + " mainCtrl Controller!");
+    $rootScope.appStarted = true
 
-    //init variabili $scope
     $scope.products = [];
 
     $scope.productsToShow = [];
@@ -12,9 +14,10 @@ angular.module('provaMrkCldApp')
 
     $scope.filterId = ""
 
-    //per la scelta delle variants
+    //keeps track of the selected variant's options
     $scope.selectedOptions = {}
-    //last variant's selected id
+
+    //keeps track of the last variant's selected id
     $scope.variantId = 0
 
     $scope.shopName = marketcloud.name
@@ -23,14 +26,15 @@ angular.module('provaMrkCldApp')
     }
 
     if(!/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent) && $rootScope.fromUpdatedCart){
-      Notification.success({message: 'Salvataggio automatico del carrello ', delay: 2500});
+      Notification.success({message: 'The cart has been updated ', delay: 2500});
       $rootScope.fromUpdatedCart = false;
     }
 
-    //Funzione per recuperare i prodotti dello store
+    //Retrieves the product list
     marketcloud.products.list({}, function (err, products) {
       if (err) {
-        alert("Critical error - Recupero prodotti");
+        alert("Critical error in retrieving products: see log ");
+        $log.error(err)
       } else {
         $scope.productsToShow = products
         $scope.products = products;
@@ -38,11 +42,12 @@ angular.module('provaMrkCldApp')
       }
     });
 
-    //recupero delle categorie
+    //Retrieves the category list
     marketcloud.categories.list({}, function(err,categories){
       if (err)
       {
-        $log.log("Errore in recupero categorie")
+        alert("Critical error in retrieving categories: see log ");
+        $log.error(err)
       }
       else {
         for (var i = 0; i < categories.length; i++) {
@@ -52,12 +57,12 @@ angular.module('provaMrkCldApp')
             name: categories[i].name
           });
         }
-        $log.info("CATEGORY LIST ->>> ",$scope.categories)
+        $log.info("Category list is ",$scope.categories)
         $scope.$applyAsync()
       }
     });
 
-    //Funzione per aprire un popup con i dettagli del prodotto
+    //opens a modal with the product's details.
     $scope.clickToOpen = function (product) {
       $scope.actualProduct = product;
       $log.info(product)
@@ -105,8 +110,6 @@ angular.module('provaMrkCldApp')
       if(stock_type == undefined)
       { return true }
 
-      $log.error("---------------------------------------------.")
-
       return false
     }
 
@@ -117,30 +120,36 @@ angular.module('provaMrkCldApp')
      Il parametro quantity, se presente, ne determina la quantità.
      Se non presente, viene settato di default a 1.
      */
+    /**
+     * Allows the user to add a product to the cart.
+     * Eventually calls the addToCart method from cartFactory.js
+     * @param product   the actual product
+     * @param quantity  the quantity of the product
+       */
     $scope.addToCart = function (product, quantity) {
       swal({
-        title: "Conferma",
-        text: "Vuoi aggiungere questo elemento al carrello?",
+        title: "Confirm",
+        text: "Do you really want to add this product to the cart?",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Si, continua",
+        confirmButtonText: "Yes, continue",
         animation: "slide-from-top",
-        cancelButtonText: "No, Ho cambiato idea",
+        cancelButtonText: "No, I changed my mind",
         closeOnConfirm: false,
       }, function (isConfirm) {
         if (isConfirm) {
 
-          //Se l'oggetto ha varianti e nessuna variante è stata ancora selezionata sarà aperto il modal per l'oggetto in dettaglio
+          //If the product has some variants and no variant's options has been selected a modal with the item's details will be openened
           if (product.has_variants && (Object.keys($scope.selectedOptions).length == 0 && $scope.variantId == 0 )) {
-            $log.info("productHasVariant will be called")
+            $log.info("productHasVariant() will be called")
             productHasVariant(product)
             return
           }
 
-           var item = new Object();
-           item.id = product.id;
-           item.variant = $scope.variantId
+          var item = new Object();
+          item.id = product.id;
+          item.variant = $scope.variantId
 
           $scope.variantId = 0
           $scope.selectedOptions = {}
@@ -157,9 +166,9 @@ angular.module('provaMrkCldApp')
             }
 
             $log.info("this item will be added to cart is = ", item);
-            cartFactory.aggiungiAlCarrello(item);
+            cartFactory.addToCart(item);
             $uibModalStack.dismissAll()
-            swal("Completato", "Oggetto aggiunto al carrello!", "success");
+            swal("Ok", "The product has been added to cart!", "success");
 
         } else {
           $log.log("Closing swal");
@@ -176,10 +185,7 @@ angular.module('provaMrkCldApp')
       $uibModalStack.dismissAll()
     };
 
-
-//--------------------------------- NOT $SCOPE-RELATED --------------------------------------
-
-    //Checks a (whole) variants has been selected
+    //Checks IF a (whole) variants has been selected
     $scope.checkVariantsSelected = function() {
       if (!$scope.actualProduct.has_variants) {
         $log.log("actualProduct has no variants")
@@ -200,14 +206,14 @@ angular.module('provaMrkCldApp')
       }
     }
 
-
+//--------------------------------- NOT $SCOPE-RELATED --------------------------------------
 
     //Checks if product has some variants and opens the modal
     function productHasVariant(product)
     {
       swal({
-          title: "Informazione!",
-          text: "Questo prodotto ha delle varianti! Verrai ora reindirizzato alla pagina del dettaglio.",
+          title: "Info!",
+          text: "This product has some variants! You will now be redirect to the variant's list.",
           showCancelButton: true,
           cancelButtonText: "Annulla!",
         },
@@ -225,40 +231,44 @@ angular.module('provaMrkCldApp')
     }
 
 
-    //FUNZIONE PER RISALIRE AL GIUSTO VARIANT ID
+
+    /**
+     * retrieves the correct variant id
+     * @param selected array with the variant's selected options.
+     * returns the variant id or 0 if errors occurred.
+     */
     function findVariantId(selected) {
-      var arrayFinale = $scope.actualProduct.variants
+      var finalArray = $scope.actualProduct.variants
 
       for (var key in selected) {
-        var chiave  = key
-        var valore = selected[chiave]
+        var theKey  = key
+        var theValue = selected[theKey]
 
         var goodIndexs = []
 
-        for (var i = 0; i < arrayFinale.length; i++) {
-          if (arrayFinale[i][chiave] == valore ) {
+        for (var i = 0; i < finalArray.length; i++) {
+          if (finalArray[i][theKey] == theValue ) {
             goodIndexs.push(i)
           }
         }
         var tempArray = []
         for (var i = 0; i < goodIndexs.length; i++) {
-          tempArray.push(arrayFinale[goodIndexs[i]])
+          tempArray.push(finalArray[goodIndexs[i]])
         }
-        arrayFinale = tempArray
+        finalArray = tempArray
       }
 
-      if (arrayFinale.length != 1 ) {
-        alert("CRITICAL ERROR: NO VARIANTS FOUND OR FOUND MULTIPLE VARIANTS!")
-        return
+      if (finalArray.length != 1 ) {
+        alert("Critical error: no variant or multiple variants have been found!!")
+        return 0
       } else {
-        $log.log("Returning "+ arrayFinale[0]["id"])
-        return arrayFinale[0]["id"]
+        $log.log("Returning "+ finalArray[0]["id"])
+        return finalArray[0]["id"]
       }
     }
     //-----------------------------------------------------------------------------
 
     //----------------------------Categories----------------------------
-
 
     //Counts how many products per category are in the $scope.products array
     $scope.countProductsByCategoryId = function(catId) {
@@ -271,25 +281,23 @@ angular.module('provaMrkCldApp')
       return counter
     }
 
-    //Checks if filter is active
+    //Checks if a filter is active
     $scope.isActive = function(id) {
       return $scope.filterId == id
     };
 
     //Category filter
-    $scope.filter = function (idCategoria) {
+    $scope.filter = function (categoryId) {
       $log.info("Filter")
-      if ($scope.filterId == idCategoria) {
-        $log.info("Caso 1 ")
+      if ($scope.filterId == categoryId) {
         $scope.filterId = ""
         $scope.productsToShow = $scope.products
       } else {
-        $log.info("Caso 2 ")
         $scope.productsToShow = [];
-        $scope.filterId = idCategoria
+        $scope.filterId = categoryId
         for (var i = 0; i < $scope.products.length; i++) {
-          $log.info("Reading " +$scope.products[i].category_id +" vs "+idCategoria)
-          if ($scope.products[i].category_id == idCategoria) {
+          $log.info("Reading " +$scope.products[i].category_id +" vs "+categoryId)
+          if ($scope.products[i].category_id == categoryId) {
             $scope.productsToShow.push($scope.products[i])
           }
         }
@@ -299,14 +307,14 @@ angular.module('provaMrkCldApp')
 
 //---------------------------------DEBUG--------------------------------------
     /**
-     * |DEBUG| Metodo per stampare in console le informazioni di un prodotto
-     * @param product
+     * |DEBUG| prints to console the product's info
+     * @param product the actual product
      */
     $scope.toConsole = function (product) {
       $log.log(product);
     };
 
-    //Stampa informazioni riguardo l'utente che seleziona le varianti
+    //prints infos about the variant selection.
     $scope.printSelectedOptions = function() {
       $log.log($scope.selectedOptions)
       $log.log(Object.keys($scope.selectedOptions).length)

@@ -10,13 +10,13 @@
         </form>
 
         <!-- Form Name -->
-        <legend>Indirizzo di fatturazione</legend>
+        <legend>Billing address</legend>
 
         <!-- Text input-->
         <div class="form-group">
           <label class="col-sm-1 control-label">Nominativo</label>
           <div class="col-sm-12">
-            <input type="text" placeholder="Nominativo" ng-model="billingInfos.full_name" class="form-control"
+            <input type="text" placeholder="Name" ng-model="billingInfos.full_name" class="form-control"
                    ng-readonly="sameAsShipping" required>
           </div>
         </div>
@@ -25,7 +25,7 @@
         <div class="form-group">
           <label class="col-sm-1 control-label">Indirizzo</label>
           <div class="col-sm-12">
-            <input type="text" placeholder="Indirizzo" ng-model="billingInfos.address1" class="form-control"
+            <input type="text" placeholder="Address" ng-model="billingInfos.address1" class="form-control"
                    ng-readonly="sameAsShipping" required>
           </div>
         </div>

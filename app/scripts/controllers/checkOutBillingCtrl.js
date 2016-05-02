@@ -1,11 +1,11 @@
 'use strict'
 /**
- * Gestisce la view del billing address
+ * Manages the billing address view.
  */
 angular.module('provaMrkCldApp')
   .controller('checkOutBilling', function ($scope, $rootScope, marketcloud, cartFactory, $log, $window, paymentFactory) {
-   // console.log("checkOutBilling controller")
-    if (($rootScope.loggedIn == undefined || !$rootScope.loggedIn)) {
+    //console.log("checkOutBilling controller")
+    if ($rootScope.loggedIn == undefined || !$rootScope.loggedIn) {
       $window.location.assign('/#');
     }
 
@@ -22,11 +22,12 @@ angular.module('provaMrkCldApp')
       'country': ''
     };
 
+    //Manages the 'back' button
     $scope.back = function () {
       $window.history.back();
     }
 
-    //controlla che tutti i campi siano stati riempiti
+    //Checks if all fields has been filled.
     $scope.validate = function () {
       if ($scope.billingInfos.address1 == "" || $scope.billingInfos.city == "" || $scope.billingInfos.full_name == "" ||
         $scope.billingInfos.postal_code == "" || $scope.billingInfos.country == "") {
@@ -39,7 +40,9 @@ angular.module('provaMrkCldApp')
       return true
     }
 
-    //recupera lo shipping address precedentemente inserito e ne copia i campi
+    /**
+     * Retireves the last shipping address id and copies its fields.
+     */
     $scope.copyAddress = function () {
       if ($scope.sameAsShipping) {
         if (paymentFactory.shippingInfosFilled()) {
@@ -53,74 +56,68 @@ angular.module('provaMrkCldApp')
 
 
     /*
-     FUNZIONE PER CONFERMARE IL BILLING ADDRESS. Si divide in 3 casistiche
+     This functions confirms the billing address. There are 3 possible scenarios.
      ______________________________________________________________________________________________
-     CASO 1: L'utente ha scelto di ricopiare le informazioni dell'indirizzo di spedizione  precedentemente inserito
-     ed è  stata già fatta una copia delle informazioni (metodo copyAddress).
-     Si procede quindi alla schermata riassuntiva
+     [A] user asked to copy the shipping address datas. The '$scope.copyAddress' method has been called.
+     User can continue to the recap view.
      ______________________________________________________________________________________________
-     CASO 2: L'utente non ha scelto di ricopiare le informazioni dell'indirizzo di spedizione precedentemente inserito.
-     L'utente ha quindi inserito un nuovo indirizzo, che non è stato trovato nell'archivio di spedizione
-     L'indirizzo sarà quindi registrato sul server, in modo tale da ottenere un ID da utilizzare successivamente
-     in fase di conferma dell'ordine.
-     L'id ottenuto sarà settato come $scope.billingInfos.id e questi dati saranno quindi inviati al service.
-     Si procede quindi alla schermata riassuntiva
+     [B]  user didn't ask to copy the shipping address datas and filled the fields with a new address.
+         This address has not been used previously for the shipping or billing.
+         The new address will be registered and the id will be retireved in order to move to the recap view.
      ______________________________________________________________________________________________
-     CASO 3: A differenza del caso 2 l'indirizzo non è stato registrato sul server poiché l'utente ha inserito un
-     indirizzo già esistente.
-     Viene effetuata una scansione degli indirizzi presenti e viene recuperato l'id dell'indirizzo 'copia'.
-     L'id ottenuto sarà settato come $scope.billingInfos.id e si procede infine alla schermata riassuntiva.
+     [C] This is similar to the B scenario but user setted an address that has already been used in the past
+     by the same user. The address will not be registered again and the address id will be retrieved.
+     The user will eventually move to the recap view.
      */
     $scope.save = function () {
       if ($scope.sameAsShipping) {
         paymentFactory.setBillingInfos($scope.billingInfos)
-        $log.log("CASO 1 : Billing infos setted |  OK")
+        $log.log("[A] : Billing infos setted |  OK")
         paymentFactory.checkBillingAndProceed()
       }
       else {
-        $log.log("Devo controllare che ", $scope.billingInfos + " non sia uguale agli shipping address registrati")
+        $log.log("I have to check if  ", $scope.billingInfos + " has not been previously used")
         if ($scope.newAddress($scope.billingInfos)) {
           marketcloud.addresses.create($scope.billingInfos, function (err, data) {
             if (err) {
-              $log.warn("Errore in creazione nuovo indirizzo (billing) :( ", err);
+              $log.warn("Error in creating a new address (billing) :( ", err);
             } else {
-              $log.warn("nuovo indirizzo salvato sul server -> ", data)
+              $log.warn("the new address has been created -> ", data)
               $scope.billingInfos.id = data.id
               paymentFactory.setBillingInfos($scope.billingInfos)
-              $log.log("CASO 2 : Billing infos setted |  OK")
+              $log.log("[B] : Billing infos setted |  OK")
               paymentFactory.addToAddressesList(data)
               paymentFactory.checkBillingAndProceed()
             }
           })
         }
         else {
-          $log.info("l'indirizzo esiste già e quindi non sarà registrato")
+          $log.info("This address has been previously used")
           $scope.billingInfos.id = $scope.retrievedId
           paymentFactory.setBillingInfos($scope.billingInfos)
-          $log.log("CASO 3 : Billing infos setted |  OK")
+          $log.log("[C] : Billing infos setted |  OK")
           paymentFactory.checkBillingAndProceed()
         }
       }
     }
 
 
-    //Controlla un indirizzo è nuovo o meno
+    //Checks if an address has been previously used.
     $scope.newAddress = function (address) {
       var lastSavedAddresses = angular.copy(paymentFactory.getAddressesList())
-      $log.info("Lista ultimi indirizzi salvati -> ", lastSavedAddresses)
-      $log.log("Indirizzo di verifica -> " + address.full_name + ", " + address.address1 + ", " + address.city + ", " + address.country)
+      $log.info("List of the last addresses -> ", lastSavedAddresses)
+      //$log.log("verify this -> " + address.full_name + ", " + address.address1 + ", " + address.city + ", " + address.country)
       for (var i = 0; i < lastSavedAddresses.length; i++) {
         if ((address.address1 == lastSavedAddresses[i].address1)
           && (address.city == lastSavedAddresses[i].city)
           && (address.country == lastSavedAddresses[i].country)
           && (address.full_name == lastSavedAddresses[i].full_name)) {
           $scope.retrievedId = lastSavedAddresses[i].id
-          $log.log("indirizzo già usato -> non sarà aggiunto \n ID recuperato è "+$scope.retrievedId)
+          $log.log("Address has already been used -> Id will be retrieved. \n ID is "+$scope.retrievedId)
           return false
         }
       }
-      $log.log("indirizzo nuovo -> sarà aggiunto")
+      $log.log("This is a new address. Will be sent to the server")
       return true
     }
-
   });

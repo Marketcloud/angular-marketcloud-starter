@@ -1,17 +1,12 @@
 'use strict'
 /**
- * Gestisce l'invio dei campi relativi a shipping address, billing address e carta di credito per
- * pagamento con Stripe.
- * Si occupa anche del recupero degli indirizzi registrati dall'utente e della loro gestione.
- * Questi indirizzi sono memorizzati in una lista locale.
- * Ogni qualvolta che un controller (relativo ad una fase del checkout) effettua variazioni, come ad esempio
- * la rimozione o l'aggiunta sul server di un indirizzo, la modifica viene anche effettuata sulla lista locale, in
- * modo tale da evitare chiamate superflue al server per il rinnovo della lista e di mantenere una lista di indirizzi
- * fedele a quella presente sul server.
+ * Manages the communication with the API for the checkout section (shipping address,
+ * credit card and billing address.
+ * Also retrieves the addresses from the backend and saves them into a local list.
  */
 angular.module('provaMrkCldApp')
   .factory('paymentFactory', function ($rootScope, $log, $window ) {
-   // console.log("$rootScope setted\n $rootScope says : " + $rootScope.greet + " paymentFactory!");
+    //console.log("$rootScope setted\n $rootScope says : " + $rootScope.greet + " paymentFactory!");
     var expose = {};
 
     var addressesList = []
@@ -44,41 +39,49 @@ angular.module('provaMrkCldApp')
       'token': ''
     };
 
-    //Recupera gli indirizzi registrati dall'utente
+    //Retrieves the local user's addresses
     expose.getAddressesList = function () {
-      $log.info("Ritorno la lista di indirizzi locali...")
       return addressesList
     }
-    //setta la lista degli indirizzi registrati dall'utente (utile in caso di cambiamenti da altri controller)
+
+    //updates the local addresses list (useful when sending or removing an address from the API)
     expose.setAddressesList = function (list) {
       addressesList = list
     }
-    //Rimuove un indirizzo dalla lista (locale) degli indirizzi
+
+      /**
+       * Removes an address from the local list
+       * @param addressId id of the address
+       */
     expose.removeFromAddressesList = function (addressId) {
       var removed = 0;
       for (var i = 0; i < addressesList.length; i++) {
         if (addressesList[i].id == addressId) {
           addressesList.splice(i, 1);
-          $log.debug("Indirizzo RIMOSSO dalla lista indirizzi, che è ora ", addressesList)
+          $log.debug("The address has been removed. addressesList is now ", addressesList)
           return true
         }
       }
       return false
     }
-    //Aggiunge un indirizzo alla lista (locale) degli indirizzi
+
+    //Adds an address to the local list
     expose.addToAddressesList = function(address) {
       addressesList.push(address)
-      $log.log("Indirizzo aggiunto alla lista indirizzi, che è ora ",addressesList)
     }
 
 
-    //gestione e recupero dei campi dell'ultimo shipping address inserito
+    //retrieves the last inserted shipping address
     expose.getLastShippingInfos = function () {
       return shippingInfos
     }
+
+    //sets the  last inserted shipping address
     expose.setShippingInfos = function (infos) {
       shippingInfos = infos
     }
+
+    //Checks if all shipping address fields are filled
     expose.shippingInfosFilled = function () {
       if (shippingInfos.address1 == '' || shippingInfos.city == '' || shippingInfos.full_name == '' ||
         shippingInfos.state == '' || shippingInfos.postal_code == '' || shippingInfos.country == '') {
@@ -86,13 +89,17 @@ angular.module('provaMrkCldApp')
       } else return true
     }
 
-    //gestione e recupero dei campi dell'ultimo billing address inserito
+    //retrieves the last inserted billing  address
     expose.getLastBillingInfos = function () {
       return billingInfos
     }
+
+    //sets the  last inserted billing address
     expose.setBillingInfos = function (infos) {
       billingInfos = infos
     }
+
+    //Checks if all billing address fields are filled
     expose.billingInfosFilled = function () {
       if (billingInfos.address == "" || billingInfos.city == "" || billingInfos.name == "" ||
         billingInfos.state == "" || billingInfos.postCode == "" || billingInfos.country == "") {
@@ -100,14 +107,17 @@ angular.module('provaMrkCldApp')
       } else return true
     }
 
-
-    //gestione e recupero dei campi dei campi della carta di credito
+    //retrieves the last inserted credit card infos
     expose.getCardInfos = function () {
       return stripeCardInfos
     }
+
+    //sets the  last inserted credit card infos
     expose.setCardInfos = function (infos) {
       stripeCardInfos = infos
     }
+
+    //Checks if all credit card fields are filled
     expose.stripeCardInfosFilled = function () {
       if (stripeCardInfos.mail == "" || stripeCardInfos.card == "" || stripeCardInfos.CVC == "" ||
         stripeCardInfos.expiration == "") {
@@ -115,16 +125,17 @@ angular.module('provaMrkCldApp')
       } else return true
     }
 
-
-    //gestione del Token di Stripe
+    //sets the  last Stripe token
     expose.setStripeToken = function(token) {
       stripeCardInfos.token = token
     }
-    expose.geStripeToken = function() {
+
+    //gets the last Stripe token
+    expose.getStripeToken = function() {
       return stripeCardInfos.token
     }
 
-    //Svuotamento dei campi shipping, billing e credit card
+    //clean the shipping address, billing address and credit card fields
     expose.clearFields = function () {
       shippingInfos = {
         'id': '',
@@ -152,19 +163,8 @@ angular.module('provaMrkCldApp')
       };
     }
 
-    //------DEBUG: Stampa in console i dati degli indirizzi e della carta di credito
-    expose.printAddresRecap = function (addresses) {
-      if (!addresses) {
-        $log.log("shippingInfos ", shippingInfos)
-        $log.log("billingInfos ", billingInfos)
-        $log.log("stripeCardInfos ", stripeCardInfos)
-      }
-      else {
-        $log.log("addresses ", addressesList)
-      }
-    }
 
-    //Metodo che invia una richiesta a Stripe per verificare la carta di credito
+    //Ask Stripe for the credit card validation
     expose.checkBillingAndProceed = function() {
       var stripe_data = {
         number: stripeCardInfos.card,
@@ -180,14 +180,29 @@ angular.module('provaMrkCldApp')
           $log.log("Stripe says -> ",status,response)
           stripeCardInfos.stripe_token = response.id;
           stripeCardInfos.brand = response.card.brand;
-          alert("OK status < 400")
+          alert("Stripe status < 400 : OK")
           $window.location.assign('/#/recapOrder');
         } else {
-          alert("error status >= 400 \n check log")
-          $log.warn(status)
+          alert("Stripe status >= 400 \n ERROR! check log")
+          $log.error(status)
         }
       });
     }
+
+    //------DEBUG: prints all of the addresses and credit card datas
+    expose.printAddresRecap = function (addresses) {
+      if (!addresses) {
+        $log.log("shippingInfos ", shippingInfos)
+        $log.log("billingInfos ", billingInfos)
+        $log.log("stripeCardInfos ", stripeCardInfos)
+      }
+      else {
+        $log.log("addresses ", addressesList)
+      }
+    }
+
+
+
     return expose
   });
 

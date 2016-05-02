@@ -11,7 +11,7 @@
     <div class="col-lg-5">
 
       <div class="product-options">
-        <span class="price">Prezzo: {{actualProduct.price | currency}}</span>
+        <span class="price">Price: {{actualProduct.price | currency}}</span>
 
         <div class="form-group" ng-repeat="(v_name,v_values) in actualProduct.variantsDefinition">
           <label>
@@ -22,7 +22,7 @@
           </select>
         </div> <!--STOP-->
         <div ng-show = "actualProduct.has_variants">
-          Variante Selezionata = {{variantId}} <br>
+          Selected variant = {{variantId}} <br>
         </div>
 
         <div class="input-append pull-right">

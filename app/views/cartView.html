@@ -25,7 +25,7 @@
           </td>
         </tr>
         <!-- cart items -->
-        <tr ng-repeat="product in carrelloAttuale.items">
+        <tr ng-repeat="product in actualCart.items">
           <td>{{product.name}} </td>
           <td class="tdCenter">
             <div class="input-append">
@@ -51,7 +51,7 @@
           <td class="tdCenter" title="remove from cart">
             <button type="button" class="btn btn-default" ng-click="removeProduct(product.id, product.variant_id);">
               <span class="glyphicon glyphicon-remove"></span>
-            </button>          </td>
+            </button> </td>
         </tr>
 
         <!-- footer -->
@@ -68,13 +68,13 @@
     <div class="span4">
       <p class="text-info">
         <a href="#/">
-          <button class="btn btn-block"><i class="icon-chevron-left"/> Indietro </button>
+          <button class="btn btn-block"><i class="icon-chevron-left"/> Back </button>
         </a>
         <button
           class="btn btn-block btn-danger"
-          ng-click="svuotaCarrello();"
+          ng-click="emptyCart();"
           ng-disabled="totalItems < 1">
-          <i class="icon-trash icon-white"/> Svuota carrello
+          <i class="icon-trash icon-white"/> Empty cart
         </button>
         <button
           class="btn btn-block btn-info"
