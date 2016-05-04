@@ -5,9 +5,13 @@
 */
 
 angular.module('provaMrkCldApp')
-  .controller('signupCtrl', function ($scope, $rootScope, marketcloud, $window, $log, Notification) {
-    
-      //$log.log("$rootScope: " + $rootScope.greet + " signupCtrl Controller!");
+  .controller('signupCtrl', function ($scope, $rootScope, marketcloud, $window, $log, Notification, $location) {
+
+    //if page is refreshed user will return to the main page
+    if (!marketcloud.appStarted) {
+      $location.url('/#');
+      return
+    }
 
       if(!/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent) && $rootScope.fromUpdatedCart){
         Notification.success({message: 'The cart has been updated ', delay: 2500});

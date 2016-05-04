@@ -3,10 +3,12 @@
  * Manages the billing address view.
  */
 angular.module('provaMrkCldApp')
-  .controller('checkOutBilling', function ($scope, $rootScope, marketcloud, cartFactory, $log, $window, paymentFactory) {
-    //console.log("checkOutBilling controller")
-    if ($rootScope.loggedIn == undefined || !$rootScope.loggedIn) {
-      $window.location.assign('/#');
+  .controller('checkOutBilling', function ($scope, $rootScope, $location, marketcloud, cartFactory, $log, $window, paymentFactory) {
+
+    //if page is refreshed user will return to the main page
+    if (!marketcloud.appStarted) {
+      $location.url('/#');
+      return
     }
 
     $scope.sameAsShipping = false

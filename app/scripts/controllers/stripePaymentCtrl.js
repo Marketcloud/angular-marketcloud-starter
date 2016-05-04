@@ -4,10 +4,12 @@
  */
 angular.module('provaMrkCldApp')
   .controller('stripePaymentCtrl', function ($scope, $log, paymentFactory, cartFactory, $location, $window, $rootScope) {
-    
-    
-    if ($rootScope.loggedIn == undefined || !$rootScope.loggedIn) {
-      $window.location.assign('/#');
+
+
+    //if page is refreshed user will return to the main page
+    if (!marketcloud.appStarted) {
+      $location.url('/#');
+      return
     }
 
     $log.log("Stripe payment is on")

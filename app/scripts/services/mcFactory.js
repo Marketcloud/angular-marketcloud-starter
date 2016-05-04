@@ -5,8 +5,10 @@
  */
 angular.module('provaMrkCldApp')
   .factory('marketcloud', function ($rootScope) {
-    //$rootScope.greet = "Hello Marketcloud Factory1";
+
+    marketcloud.appStarted = false
     
     marketcloud.public = '691ad512-cd1d-420e-8ba0-433b2b02a357';
+    
     return marketcloud;
   });

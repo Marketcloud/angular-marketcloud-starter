@@ -4,9 +4,8 @@
  */
 angular.module('provaMrkCldApp')
   .controller('mainCtrl', function (cartFactory, $scope, $rootScope, marketcloud, $uibModal, $log, Notification, $uibModalStack) {
-    //$log.log("$rootScope: "+ $rootScope.greet + " mainCtrl Controller!");
-    $rootScope.appStarted = true
 
+    marketcloud.appStarted = true
     $scope.products = [];
 
     $scope.productsToShow = [];

@@ -3,10 +3,12 @@
  * Manages the order recap view
  */
 angular.module('provaMrkCldApp')
-  .controller('recapOrderCtrl', function ($scope, marketcloud, cartFactory, $log, $window, paymentFactory, $rootScope) {
+  .controller('recapOrderCtrl', function ($scope, marketcloud, cartFactory, $log, $window, paymentFactory, $rootScope, $location) {
 
-    if ($rootScope.loggedIn == undefined || !$rootScope.loggedIn) {
-      $window.location.assign('/#');
+    //if page is refreshed user will return to the main page
+    if (!marketcloud.appStarted) {
+      $location.url('/#');
+      return
     }
 
     $scope.shippingInfos = {}

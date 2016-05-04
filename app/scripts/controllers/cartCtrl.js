@@ -5,13 +5,13 @@
  */
 
 angular.module('provaMrkCldApp')
-  .controller('cartCtrl', function ($scope, $cookies, $rootScope, marketcloud, cartFactory, $log, $window) {
+  .controller('cartCtrl', function ($scope, $cookies, $rootScope, marketcloud, cartFactory, $log, $window, $location) {
     //$log.log("$rootScope: " + $rootScope.greet + " cartCtrl Controller!");
 
     //if page is refreshed user will return to the main page
-    if (!$rootScope.appStarted) {
-      $window.location.assign('/#');
-      return;
+    if (!marketcloud.appStarted) {
+      $location.url('/#');
+      return
     }
 
     $scope.actualCart = cartFactory.getLocalCart();

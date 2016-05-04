@@ -4,9 +4,11 @@
  */
 angular.module('provaMrkCldApp')
   .controller('checkOutShipping', function ($scope, $rootScope, cartFactory, $log, $location, $window, paymentFactory, $uibModal, $uibModalStack) {
-   // $log.log("checkOutCtrl Controller!")
-    if ($rootScope.loggedIn == undefined || !$rootScope.loggedIn) {
-      $window.location.assign('/#');
+
+    //if page is refreshed user will return to the main page
+    if (!marketcloud.appStarted) {
+      $location.url('/#');
+      return
     }
 
     $scope.shippingInfos = {
