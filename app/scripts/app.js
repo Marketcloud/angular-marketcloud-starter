@@ -13,8 +13,9 @@ angular
     'ui-notification',
     'ngTouch',
     'ui.bootstrap'])
-  .config(function ($routeProvider) {
+  .config(function ($routeProvider, $compileProvider) {
     console.log("Hello Angular");
+    $compileProvider.debugInfoEnabled(false);
     $routeProvider
       .when('/', {
         templateUrl: 'views/mainView.html',

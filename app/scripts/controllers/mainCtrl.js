@@ -3,9 +3,40 @@
  * Manages the shop's main view
  */
 angular.module('provaMrkCldApp')
-  .controller('mainCtrl', function (cartFactory, $scope, $rootScope, marketcloud, $uibModal, $log, Notification, $uibModalStack) {
+  .controller('mainCtrl', function (cartFactory, $scope, $rootScope, marketcloud, $uibModal, $log, Notification, $uibModalStack,$window) {
 
     marketcloud.appStarted = true
+
+    //Checks if an user session exists in marketcloud's SDK
+    if(marketcloud.users.isLoggedIn() && $rootScope.email == undefined) {
+      marketcloud.users.getCurrent(function (err, data) {
+        if (err) {
+          $log.error("error in marketcloud.users.getCurrent" + err)
+        } else {
+          $log.log("User did not log out! : retrieving user session")
+          $log.info("marketcloud.users.getCurrent")
+          $log.info(data)
+          $scope.error = false;
+          $rootScope.loggedIn = true;
+          $rootScope.email = data.email
+          $log.log("Logged in with "+$rootScope.email);
+          cartFactory.createUserCart();
+          $log.log("Switching to logged cart....")
+          $window.location.assign('/#');
+        }
+      });
+    } else {
+      //if there was no active user session in marketcloud's SDK and user did not just logged in
+      if(!$rootScope.loggedIn) {
+        $log.info("No user session founded. User was and is not logged in. Creating cart")
+        $log.info("mainCtrl calls cartFactory.createCart()")
+        cartFactory.createCart();
+      } else {
+        //debug purposes
+        $log.log("User just logged in manually")
+      }
+    }
+
     $scope.products = [];
 
     $scope.productsToShow = [];
@@ -77,13 +108,10 @@ angular.module('provaMrkCldApp')
       });
     }
 
-
-
     //Checks a product's availability (checks stock type, stock level, stock status and eventually the quantity)
     $rootScope.isAvailable = function(stock_type, stock_level, stock_status, quantity) {
 
       if(stock_type == "infinite") {
-
         return true
       }
 
@@ -112,19 +140,12 @@ angular.module('provaMrkCldApp')
       return false
     }
 
-
-
     /*
-     Funzione per aggiungere un prodotto al carrello.
-     Il parametro quantity, se presente, ne determina la quantità.
-     Se non presente, viene settato di default a 1.
-     */
-    /**
      * Allows the user to add a product to the cart.
      * Eventually calls the addToCart method from cartFactory.js
      * @param product   the actual product
      * @param quantity  the quantity of the product
-       */
+     */
     $scope.addToCart = function (product, quantity) {
       swal({
         title: "Confirm",
@@ -155,19 +176,19 @@ angular.module('provaMrkCldApp')
 
 
           $log.log("item.variant is " +item.variant)
-           $log.log("$scope.variantId is " +$scope.variantId)
+          $log.log("$scope.variantId is " +$scope.variantId)
 
-            if (!quantity) {
-              item.quantity = 1;
-            }
-            else {
-              item.quantity = quantity;
-            }
+          if (!quantity) {
+            item.quantity = 1;
+          }
+          else {
+            item.quantity = quantity;
+          }
 
-            $log.info("this item will be added to cart is = ", item);
-            cartFactory.addToCart(item);
-            $uibModalStack.dismissAll()
-            swal("Ok", "The product has been added to cart!", "success");
+          $log.info("this item will be added to cart is = ", item);
+          cartFactory.addToCart(item);
+          $uibModalStack.dismissAll()
+          swal("Ok", "The product has been added to cart!", "success");
 
         } else {
           $log.log("Closing swal");
@@ -175,7 +196,6 @@ angular.module('provaMrkCldApp')
         }
       });
     }
-
 
     //Closes the detail modal and resets all variant ids
     $scope.modalDismiss = function(id) {
@@ -208,8 +228,7 @@ angular.module('provaMrkCldApp')
 //--------------------------------- NOT $SCOPE-RELATED --------------------------------------
 
     //Checks if product has some variants and opens the modal
-    function productHasVariant(product)
-    {
+    function productHasVariant(product) {
       swal({
           title: "Info!",
           text: "This product has some variants! You will now be redirect to the variant's list.",
@@ -228,8 +247,6 @@ angular.module('provaMrkCldApp')
       );
       return
     }
-
-
 
     /**
      * retrieves the correct variant id
@@ -266,7 +283,6 @@ angular.module('provaMrkCldApp')
       }
     }
     //-----------------------------------------------------------------------------
-
     //----------------------------Categories----------------------------
 
     //Counts how many products per category are in the $scope.products array
@@ -318,6 +334,5 @@ angular.module('provaMrkCldApp')
       $log.log($scope.selectedOptions)
       $log.log(Object.keys($scope.selectedOptions).length)
     }
-
     //-----------------------------------------------------------------------------
   });

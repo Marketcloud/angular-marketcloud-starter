@@ -7,7 +7,7 @@
  * Every methods can select the right one checking the $rootScope.loggedIn status (boolean).
  */
 angular.module('provaMrkCldApp')
-  .factory('cartFactory', function ($cookies, $rootScope,$window,$location,$log) {
+  .factory('cartFactory', function ($rootScope,$window,$location,$log) {
 
     var localCartUnloggedUser = [];
     var localCartLoggedUser = [];
@@ -122,18 +122,20 @@ angular.module('provaMrkCldApp')
      */
     exposeCart.createCart = function () {
       /*
-        If the cookie with the cart id is not available, a new empty cart will be created and its id will be saved
-        in a new cookie.
+        If the storage value with the cart id is not available, a new empty cart will be created and its id will be saved
+        in a new storage value.
         This cart is not user-related. It means that the user is currently not logged in.
-        The id will be stored in a cookie.
+        The id will be stored in a storage value.
        */
-      if (!$cookies.get('mc-cart-id')) {
-        marketcloud.carts.create({}, function (err, cart) {
+      $log.info("exposeCart.createCart()")
+      $log.info("marketcloud.storage.get('mc-cart-id')    -> "+marketcloud.storage.get('mc-cart-id'))
 
-          //a new cookie with the cart id will be created
-          var expireDate = new Date();
-          expireDate.setDate(expireDate.getDate() + 1); //it will last for one day
-          $cookies.put('mc-cart-id', cart.id), {'expires': expireDate};
+      if(marketcloud.storage.get('mc-cart-id') == null) {
+        marketcloud.carts.create({}, function (err, cart) {
+          $log.info("chiama carts.create")
+
+          marketcloud.storage.set("mc-cart-id",cart.id)
+          $log.log("storage.set setted @ 'mc-cart-id' -> "+marketcloud.storage.get("mc-cart-id"));
 
           //sets the remote cart id with the new cart id
           exposeCart.setRemoteCartId(cart.id);
@@ -146,17 +148,21 @@ angular.module('provaMrkCldApp')
         });
       }
       else {
-        /* If there was a cookie with a cart id, the cart will be retrieved from the API.
+        /* If there was a storage value with a cart id, the cart will be retrieved from the API.
          */
-        marketcloud.carts.getById($cookies.get('mc-cart-id'), function (err, cart) {
+        marketcloud.carts.getById(marketcloud.storage.get('mc-cart-id'), function (err, cart) {
+          $log.info("chiama carts.getById")
+
           if (cart == null) {
-            //if for some reason the cart has not been retireved, a new one will be created
-            $cookies.remove('mc-cart-id');
+            //if for some reason the cart has not been retrieved, a new one will be created
+            marketcloud.storage.del('mc-cart-id')
             exposeCart.createCart();
+            return
           }
           //Cart has been retrieved. The id and the new cart will be setted.
           exposeCart.setRemoteCartId(cart.id);
           exposeCart.setLocalCart(cart);
+          $log.info(cart)
           $rootScope.$broadcast('cartUpdated', getCount(), exposeCart.getPrice());
 
           if (err) {
@@ -171,6 +177,7 @@ angular.module('provaMrkCldApp')
      * If an user has just logged in, the app will try to retrieve  the user cart from the API.
      */
     exposeCart.createUserCart = function () {
+      $log.info("exposeCart.createUserCart")
       marketcloud.carts.getByUser(function (err, cart) {
         if (err) {
           $log.warn("Critical error in retrieving the user cart. A new one will be created ")
@@ -178,7 +185,7 @@ angular.module('provaMrkCldApp')
         if (cart == undefined || cart.items == undefined) {
           //There were no user-related cart. A new user cart will be created.
           marketcloud.carts.create({}, function (err, newCart) {
-
+            $log.warn("//There were no user-related cart. A new user cart will be created.")
             cart = newCart;
             exposeCart.setRemoteCartId(cart.id);
 
@@ -188,19 +195,21 @@ angular.module('provaMrkCldApp')
             }
             exposeCart.setLocalCart(cart);
           });
-
         } else {
           //if everything went ok, the user-cart has been retrieved from the API
+          $log.info("//if everything went ok, the user-cart has been retrieved from the API")
           exposeCart.setLocalCart(cart);
           exposeCart.setRemoteCartId(cart.id);
         }
         $log.info("Calling  exposeCart.switchToLoggedCart(); ")
-        $log.warn("There are some products to trasnfer...... ", localCartUnloggedUser.items);
         /**
          * IF THE UNLOGGED CART HAD SOME PRODUCTS INSIDE, THE USER CAN CHOOSE TO TRANSFER THESE PRODUCTS
          * IN HIS CART (THE USER-RELATED ONE).
          */
-        exposeCart.switchToLoggedCart();
+        if (localCartUnloggedUser.items != undefined) {
+          $log.warn("There are some products to transfer? -> ", localCartUnloggedUser.items);
+          exposeCart.switchToLoggedCart();
+        }
       });
     }
 
@@ -238,8 +247,8 @@ angular.module('provaMrkCldApp')
       }
       else if ((!$rootScope.loggedIn && localCartUnloggedUser != undefined && localCartUnloggedUser.items.length != 0)) {
         localCartUnloggedUser.items = [];
-        $cookies.remove('mc-cart-id');
-        $log.debug("$cookies is ", $cookies);
+        marketcloud.storage.del('mc-cart-id');
+        $log.debug("marketcloud.storage.get(mc-cart-id') is "+ marketcloud.storage.get(mc-cart-id));
         exposeCart.createCart();
         $rootScope.$broadcast('cartUpdated', getCount(), exposeCart.getPrice());
       }
@@ -352,7 +361,7 @@ angular.module('provaMrkCldApp')
 
       var productToTransfer = localCartUnloggedUser.items;
 
-      if (productToTransfer.length == undefined || productToTransfer.length == 0) { //OK
+      if (productToTransfer == undefined || (productToTransfer.length == undefined || productToTransfer.length == 0)) {
         $log.info("no products need to be transfered!")
         return;
       }
@@ -401,14 +410,14 @@ angular.module('provaMrkCldApp')
             }
 
             localCartUnloggedUser.items = [];
-            $cookies.remove('mc-cart-id');
+            marketcloud.storage.del('mc-cart-id')
 
             $rootScope.$broadcast('cartUpdated', getCount(), exposeCart.getPrice());
           });
         } else {
           localCartUnloggedUser.items = [];
           productToTransfer = [];
-          $cookies.remove('mc-cart-id');
+          marketcloud.storage.del('mc-cart-id')
           swal.close();
           return;
         }

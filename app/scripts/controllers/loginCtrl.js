@@ -5,7 +5,7 @@
  */
 
 angular.module('provaMrkCldApp')
-  .controller('loginCtrl', function ($scope, $cookies, $rootScope, marketcloud, $window, cartFactory, $log, Notification, $location) {
+  .controller('loginCtrl', function ($scope, $rootScope, marketcloud, $window, cartFactory, $log, Notification, $location) {
     //$log.log("$rootScope: " + $rootScope.greet + " loginCtrl Controller!");
 
     //if page is refreshed user will return to the main page
@@ -14,14 +14,6 @@ angular.module('provaMrkCldApp')
       return
     }
 
-    FB.getLoginStatus(function(response) {
-      if (response.status === 'connected') {
-        $log.info('was logged in.');
-        FB.logout()
-        $log.info("now is logged out...")
-      }
-    });
-
     //IMPORTANT: manages the status of the current user
     $rootScope.loggedIn = false;
 
@@ -29,7 +21,6 @@ angular.module('provaMrkCldApp')
       Notification.success({message: 'The cart has been updated', delay: 2500});
       $rootScope.fromUpdatedCart = false;
     }
-
 
     $scope.email = "";
     $scope.password = "";
@@ -49,28 +40,20 @@ angular.module('provaMrkCldApp')
           $scope.$applyAsync()
         }
         else {
-         // $log.info("logged in :  data is " ,data)
-
-          var infoCookie = data.token
-          var expireDate = new Date();
-          expireDate.setDate(expireDate.getDate() + 1); //session will be 1 day long
-
-          $cookies.put('mc-user-token', infoCookie), {'expires': expireDate};
-          //mc-user.token is the token's name. infoCookie will cointains all the session's info.
-          //$log.log(infoCookie);
+         $log.info("logged in :  data is " ,data)
 
           $scope.error = false;
 
           $rootScope.loggedIn = true;
           $rootScope.email = $scope.email
+          
+          $log.log("Logged in with "+$scope.email);
+          $log.log("Switching to logged cart....")
 
           cartFactory.createUserCart();
 
           $window.location.assign('/#');
 
-
-          $log.log("Logged in with "+$scope.email);
-          $log.log("Switching to logged cart....")
         }
       })
     }
@@ -86,7 +69,29 @@ angular.module('provaMrkCldApp')
           var user_id = response.authResponse.userID;
           $log.log(access_token)
           $log.log(user_id)
+          marketcloud.users.authenticateWithFacebook(user_id, access_token, function (err, data) {
+            if (err) {
+              $log.error("ERROR! -> ", err)
+              $scope.error = true;
+              $scope.$applyAsync()
+            }
+            else {
+              $log.info("OK! -> ", data)
+              $scope.error = false;
 
+              $rootScope.loggedIn = true;
+
+              //todo: ricava email da data
+              $rootScope.email = data.user.email
+              $log.log("Logged in with "+$rootScope.email);
+
+              cartFactory.createUserCart();
+              $log.log("Switching to logged cart....")
+
+              $window.location.assign('/#');
+
+            }
+          })
         }
         else {
           $log.log("Loggin in...")
@@ -102,28 +107,30 @@ angular.module('provaMrkCldApp')
             marketcloud.users.authenticateWithFacebook(user_id, access_token, function (err, data) {
               if (err) {
                 $log.error("ERROR! -> ", err)
+                $scope.error = true;
+                $scope.$applyAsync()
+
               }
               else {
                 $log.info("OK! -> ", data)
+
+                $scope.error = false;
+
+                $rootScope.loggedIn = true;
+
+                $rootScope.email = data.user.email
+                $log.log("Logged in with "+$rootScope.email);
+
+                cartFactory.createUserCart();
+                $log.log("Switching to logged cart....")
+
+                $window.location.assign('/#');
               }
             })
+          }, {
+            scope: 'public_profile,email'
           })
         }
       });
     }
   });
-
-
-/*
- $log.info("Logged in -> managing data")
-
- marketcloud.users.authenticateWithFacebook(response.authResponse.userID, response.authResponse.accessToken, function (err, data) {
-
- if (err) {
- $log.error("ERROR! -> ", err)
- }
- else {
- $log.info("OK! -> ", data)
- }
- })
- */

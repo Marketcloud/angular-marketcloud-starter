@@ -5,7 +5,7 @@
  */
 
 angular.module('provaMrkCldApp')
-  .controller('cartCtrl', function ($scope, $cookies, $rootScope, marketcloud, cartFactory, $log, $window, $location) {
+  .controller('cartCtrl', function ($scope, $rootScope, marketcloud, cartFactory, $log, $window, $location) {
     //$log.log("$rootScope: " + $rootScope.greet + " cartCtrl Controller!");
 
     //if page is refreshed user will return to the main page
@@ -178,7 +178,5 @@ angular.module('provaMrkCldApp')
       $log.log("$scope.updateList is ", $scope.updateList);
     }
     //--------------------------------------------------------------
-
-
-
+    
   });
