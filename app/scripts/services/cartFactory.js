@@ -387,7 +387,6 @@ angular.module('provaMrkCldApp')
       tempArray = null;
       productsText += '</ul> <p> </p></div>';
 
-
       swal({
         title: "Do you want to merge the carts?",
         text: productsText,

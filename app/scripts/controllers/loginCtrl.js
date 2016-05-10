@@ -46,7 +46,7 @@ angular.module('provaMrkCldApp')
 
           $rootScope.loggedIn = true;
           $rootScope.email = $scope.email
-          
+
           $log.log("Logged in with "+$scope.email);
           $log.log("Switching to logged cart....")
 
@@ -69,68 +69,47 @@ angular.module('provaMrkCldApp')
           var user_id = response.authResponse.userID;
           $log.log(access_token)
           $log.log(user_id)
-          marketcloud.users.authenticateWithFacebook(user_id, access_token, function (err, data) {
-            if (err) {
-              $log.error("ERROR! -> ", err)
-              $scope.error = true;
-              $scope.$applyAsync()
-            }
-            else {
-              $log.info("OK! -> ", data)
-              $scope.error = false;
-
-              $rootScope.loggedIn = true;
-
-              //todo: ricava email da data
-              $rootScope.email = data.user.email
-              $log.log("Logged in with "+$rootScope.email);
-
-              cartFactory.createUserCart();
-              $log.log("Switching to logged cart....")
-
-              $window.location.assign('/#');
-
-            }
-          })
+          authFacebook(user_id, access_token)
         }
         else {
           $log.log("Loggin in...")
           FB.login(function (res) {
             $log.info("Logged in")
-
             var access_token = res.authResponse.accessToken;
             var user_id = res.authResponse.userID;
-
             $log.log("Access Token is "+access_token)
             $log.log("User Id is " +user_id)
-
-            marketcloud.users.authenticateWithFacebook(user_id, access_token, function (err, data) {
-              if (err) {
-                $log.error("ERROR! -> ", err)
-                $scope.error = true;
-                $scope.$applyAsync()
-
-              }
-              else {
-                $log.info("OK! -> ", data)
-
-                $scope.error = false;
-
-                $rootScope.loggedIn = true;
-
-                $rootScope.email = data.user.email
-                $log.log("Logged in with "+$rootScope.email);
-
-                cartFactory.createUserCart();
-                $log.log("Switching to logged cart....")
-
-                $window.location.assign('/#');
-              }
-            })
+            authFacebook(user_id, access_token)
           }, {
             scope: 'public_profile,email'
           })
         }
       });
+    }
+
+
+    var authFacebook = function(user_id, access_token) {
+      marketcloud.users.authenticateWithFacebook(user_id, access_token, function (err, data) {
+        if (err) {
+          $log.error("ERROR! -> ", err)
+          $scope.error = true;
+          $scope.$applyAsync()
+        }
+        else {
+          $log.info("OK! -> ", data)
+          $scope.error = false;
+
+          $rootScope.loggedIn = true;
+
+          $rootScope.email = data.user.email
+          $log.log("Logged in with "+$rootScope.email);
+
+          cartFactory.createUserCart();
+          $log.log("Switching to logged cart....")
+
+          $window.location.assign('/#');
+
+        }
+      })
     }
   });

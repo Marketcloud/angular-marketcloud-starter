@@ -32,7 +32,7 @@ angular.module('provaMrkCldApp')
         $log.info("mainCtrl calls cartFactory.createCart()")
         cartFactory.createCart();
       } else {
-        //debug purposes
+        //debug
         $log.log("User just logged in manually")
       }
     }
