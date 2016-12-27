@@ -5,9 +5,11 @@
  */
 angular.module('provaMrkCldApp')
   .factory('marketcloud', function () {
-    
-    marketcloud.appStarted = false
-    marketcloud.public = '691ad512-cd1d-420e-8ba0-433b2b02a357';
+    //Marketcloud SDK instance
+    var marketcloud = new Marketcloud.Client({
+       publicKey : '691ad512-cd1d-420e-8ba0-433b2b02a357'
+    })
+    marketcloud.appStarted = false;
 
     return marketcloud;
   });
